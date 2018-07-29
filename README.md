@@ -9,7 +9,7 @@ https://crates.io/crates/byte-unit
 
 ## Documentation
 
-https://docs.rs/ffmpeg-screen-recorder/
+https://docs.rs/byte-unit
 
 ## License
 
