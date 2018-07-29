@@ -1,0 +1,17 @@
+[package]
+name = "byte-unit"
+version = "1.0.0"
+authors = ["Magic Len <len@magiclen.org>"]
+repository = "https://github.com/magiclen/byte-unit"
+homepage = "https://magiclen.org/byte-unit"
+keywords = ["byte", "unit", "kb", "mb", "gb"]
+categories = ["parsing"]
+description= "A library for interaction with units of bytes."
+readme = "README.md"
+license = "MIT"
+
+[profile.release]
+panic = "abort"
+
+[dependencies]
+regex = "1"
