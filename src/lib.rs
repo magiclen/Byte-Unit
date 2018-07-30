@@ -402,13 +402,13 @@ impl Byte {
     pub fn from_string(string: &str) -> Result<Byte, ByteError> {
         let string = string.trim();
 
-        let regex = Regex::new(r"^(\d+(\.\d+)?)( )*(?i)(PiB|PB|P|TiB|TB|T|GiB|GB|G|MiB|MB|M|KiB|KB|K|B)?$").unwrap();
+        let regex = Regex::new(r"^(\d+(\.\d+)?)[\s]*(\S+)?$").unwrap();
 
         let captures = regex.captures(string);
 
         match captures {
             Some(captures) => {
-                let unit = match captures.get(4) {
+                let unit = match captures.get(3) {
                     Some(v) => v.as_str(),
                     None => "B"
                 };
@@ -457,7 +457,7 @@ impl Byte {
     /// ```
     /// extern crate byte_unit;
     ///
-    /// use byte_unit::{Byte};
+    /// use byte_unit::Byte;
     ///
     /// let byte = Byte::from_string("123KiB").unwrap();
     ///
@@ -469,7 +469,7 @@ impl Byte {
     /// ```
     /// extern crate byte_unit;
     ///
-    /// use byte_unit::{Byte};
+    /// use byte_unit::Byte;
     ///
     /// let byte = Byte::from_string("50.84 MB").unwrap();
     ///
@@ -488,7 +488,7 @@ impl Byte {
     /// ```
     /// extern crate byte_unit;
     ///
-    /// use byte_unit::{Byte};
+    /// use byte_unit::Byte;
     ///
     /// let byte = Byte::from_string("123KiB").unwrap();
     ///
@@ -500,7 +500,7 @@ impl Byte {
     /// ```
     /// extern crate byte_unit;
     ///
-    /// use byte_unit::{Byte};
+    /// use byte_unit::Byte;
     ///
     /// let byte = Byte::from_string("50.84 MB").unwrap();
     ///
@@ -653,7 +653,7 @@ impl PartialEq for AdjustedByte {
     /// ```
     /// extern crate byte_unit;
     ///
-    /// use byte_unit::{Byte, ByteUnit, AdjustedByte};
+    /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte1 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
     /// let byte2 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
@@ -695,7 +695,7 @@ impl ToString for AdjustedByte {
     /// ```
     /// extern crate byte_unit;
     ///
-    /// use byte_unit::{Byte, ByteUnit, AdjustedByte};
+    /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte = Byte::from_unit(1500f64, ByteUnit::KB).unwrap();
     ///
@@ -716,7 +716,7 @@ impl AdjustedByte {
     /// ```
     /// extern crate byte_unit;
     ///
-    /// use byte_unit::{Byte, ByteUnit, AdjustedByte};
+    /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte = Byte::from_unit(1555f64, ByteUnit::KB).unwrap();
     ///
