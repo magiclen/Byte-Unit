@@ -1,6 +1,6 @@
 [package]
 name = "byte-unit"
-version = "1.0.3"
+version = "1.0.4"
 authors = ["Magic Len <len@magiclen.org>"]
 repository = "https://github.com/magiclen/byte-unit"
 homepage = "https://magiclen.org/byte-unit"
@@ -11,8 +11,8 @@ readme = "README.md"
 license = "MIT"
 
 [badges]
-travis-ci = { repository = "magiclen/byte-unit", branch = "master" }
-appveyor = { repository = "magiclen/byte-unit", branch = "master", service = "github" }
+travis-ci = { repository = "magiclen/Byte-Unit", branch = "master" }
+appveyor = { repository = "magiclen/Byte-Unit", branch = "master", service = "github" }
 
 [dependencies]
 regex = "1"
