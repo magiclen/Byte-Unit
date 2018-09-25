@@ -331,9 +331,9 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let result = Byte::from_unit(1500f64, ByteUnit::KB).unwrap();
+    /// let result = Byte::from_bytes(1500000u128);
     ///
-    /// assert_eq!(result, Byte::from_bytes(1500000u128));
+    /// assert_eq!(result, Byte::from_unit(1500f64, ByteUnit::KB).unwrap());
     /// ```
     pub fn from_unit(value: f64, unit: ByteUnit) -> Result<Byte, ByteError> {
         if value < 0f64 {
@@ -356,9 +356,9 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let result = Byte::from_bytes(1500000u128);
+    /// let result = Byte::from_unit(1500f64, ByteUnit::KB).unwrap();
     ///
-    /// assert_eq!(result, Byte::from_unit(1500f64, ByteUnit::KB).unwrap());
+    /// assert_eq!(result, Byte::from_bytes(1500000u128));
     /// ```
     pub fn from_bytes(bytes: u128) -> Byte {
         Byte(ByteInner {
