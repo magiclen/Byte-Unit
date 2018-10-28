@@ -1,6 +1,6 @@
 [package]
 name = "byte-unit"
-version = "1.0.7"
+version = "1.0.8"
 authors = ["Magic Len <len@magiclen.org>"]
 repository = "https://github.com/magiclen/byte-unit"
 homepage = "https://magiclen.org/byte-unit"
@@ -16,3 +16,4 @@ appveyor = { repository = "magiclen/Byte-Unit", branch = "master", service = "gi
 
 [dependencies]
 regex = "1"
+lazy_static = "1.1.0"

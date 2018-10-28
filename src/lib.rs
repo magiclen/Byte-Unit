@@ -3,6 +3,9 @@
 
 extern crate regex;
 
+#[macro_use]
+extern crate lazy_static;
+
 use regex::Regex;
 
 #[macro_export]
@@ -265,6 +268,12 @@ macro_rules! n_pib_bytes {
     ( $x:expr, $t:ty ) => {($x * (1048576 as $t)) as u128 * 1073741824u128};
 }
 
+lazy_static! {
+    static ref BYTE_RE: Regex = {
+        Regex::new(r"^(\d+(\.\d+)?)[\s]*(\S+)?$").unwrap()
+    };
+}
+
 #[derive(Debug, PartialEq, Clone)]
 /// The unit of bytes.
 pub enum ByteUnit {
@@ -479,10 +488,12 @@ impl Byte {
     ///
     /// assert_eq!(result.get_bytes(), 1u128);
     /// ```
-    pub fn from_string(string: &str) -> Result<Byte, ByteError> {
+    pub fn from_string<S: AsRef<str>>(string: S) -> Result<Byte, ByteError> {
+        let string = string.as_ref();
+
         let string = string.trim();
 
-        let regex = Regex::new(r"^(\d+(\.\d+)?)[\s]*(\S+)?$").unwrap();
+        let regex = &*BYTE_RE;
 
         let captures = regex.captures(string);
 
