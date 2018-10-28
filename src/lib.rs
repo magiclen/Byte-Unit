@@ -270,7 +270,7 @@ macro_rules! n_pib_bytes {
 
 lazy_static! {
     static ref BYTE_RE: Regex = {
-        Regex::new(r"^(\d+(\.\d+)?)[\s]*(\S+)?$").unwrap()
+        Regex::new(r"^(\d+(\.\d+)?)[\s]*(\S{1,3})?$").unwrap()
     };
 }
 

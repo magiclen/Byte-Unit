@@ -1,6 +1,6 @@
 [package]
 name = "byte-unit"
-version = "1.0.8"
+version = "1.0.9"
 authors = ["Magic Len <len@magiclen.org>"]
 repository = "https://github.com/magiclen/byte-unit"
 homepage = "https://magiclen.org/byte-unit"
