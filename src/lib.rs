@@ -1,272 +1,148 @@
-//! # Byte Unit
-//! A library for interaction with units of bytes.
+/*!
+# Byte Unit
+
+A library for interaction with units of bytes.
+
+The units are **B** for 1 byte, **KB** for 1000 bytes, **KiB** for 1024 bytes, **MB** for 1000000 bytes, **MiB** for 1048576 bytes, etc, and up to **PiB** which is 1125899906842624 bytes.
+
+The data type for storing the size of bytes is `u128`, so don't worry about the overflow problem.
+
+## Usage
+
+### Macros
+
+There are `n_*_bytes` macros can be used. The star `*` means the unit. For example, `n_gb_bytes` can be used to get a **n-GB** value in bytes.
+
+```rust
+#[macro_use] extern crate byte_unit;
+
+let result = n_gb_bytes!(4);
+
+assert_eq!(4000000000u128, result);
+```
+
+You may need to assign a primitive type if the `n` is not an integer.
+
+```rust
+#[macro_use] extern crate byte_unit;
+
+let result = n_gb_bytes!(2.5, f64);
+
+assert_eq!(2500000000u128, result);
+```
+
+### Byte
+
+The `Byte` structure can be used for representing a size of bytes.
+
+The `from_string` associated function can parse any **SIZE** string and return a `Byte` instance in common usage. The format of a **SIZE** string is like "123", "123KiB" or "50.84 MB".
+
+```rust
+extern crate byte_unit;
+
+use byte_unit::Byte;
+
+let result = Byte::from_string("50.84 MB").unwrap();
+
+assert_eq!(50840000u128, result.get_bytes());
+```
+
+You can also use the `from_bytes` and `from_unit` associated functions to create a `Byte` instance.
+
+```rust
+extern crate byte_unit;
+
+use byte_unit::Byte;
+
+let result = Byte::from_bytes(1500000u128);
+
+assert_eq!(1500000u128, result.get_bytes());
+```
+
+```rust
+extern crate byte_unit;
+
+use byte_unit::{Byte, ByteUnit};
+
+let result = Byte::from_unit(1500f64, ByteUnit::KB).unwrap();
+
+assert_eq!(1500000u128, result.get_bytes());
+```
+
+### AdjustedByte
+
+To change the unit of a `Byte` instance, you can use the `get_adjusted_unit` method.
+
+```rust
+extern crate byte_unit;
+
+use byte_unit::{Byte, ByteUnit};
+
+let byte = Byte::from_string("123KiB").unwrap();
+
+let adjusted_byte = byte.get_adjusted_unit(ByteUnit::KB);
+
+assert_eq!("125.95 KB", adjusted_byte.to_string());
+```
+
+To change the unit of a `Byte` instance automatically and appropriately, you can use the `get_appropriate_unit` method.
+
+```rust
+extern crate byte_unit;
+
+use byte_unit::Byte;
+
+let byte = Byte::from_bytes(1500000u128);
+
+let adjusted_byte = byte.get_appropriate_unit(false);
+
+assert_eq!("1.50 MB", adjusted_byte.to_string());
+```
+
+```rust
+extern crate byte_unit;
+
+use byte_unit::Byte;
+
+let byte = Byte::from_bytes(1500000u128);
+
+let adjusted_byte = byte.get_appropriate_unit(true);
+
+assert_eq!("1.43 MiB", adjusted_byte.to_string());
+```
+
+The number of fractional digits created by the `to_string` method of a `AdjustedByte` instance is always 2.
+
+To change the number of fractional digits in the formatted string, you can use the `format` method instead.
+
+```rust
+extern crate byte_unit;
+
+use byte_unit::Byte;
+
+let byte = Byte::from_bytes(1500000u128);
+
+let adjusted_byte = byte.get_appropriate_unit(false);
+
+assert_eq!("1.5 MB", adjusted_byte.format(1));
+```
+*/
 
 extern crate regex;
 
 #[macro_use]
 extern crate lazy_static;
 
+mod macros;
+mod byte_unit;
+
+pub use byte_unit::ByteUnit;
+
+use std::fmt::{self, Display, Formatter};
+use std::hash::{Hash, Hasher};
+use std::mem::transmute;
+
 use regex::Regex;
-
-#[macro_export]
-/// Convert n KB to bytes.
-///
-/// # Examples
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_kb_bytes!(4);
-///
-/// assert_eq!(result, 4000u128);
-/// ```
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_kb_bytes!(2.5, f64);
-///
-/// assert_eq!(result, 2500u128);
-/// ```
-macro_rules! n_kb_bytes {
-    () => {1000u128};
-    ( $x:expr ) => {$x as u128 * 1000u128};
-    ( $x:expr, $t:ty ) => {($x * (1000000 as $t)) as u128 / 1000u128};
-}
-
-#[macro_export]
-/// Convert n KiB to bytes.
-///
-/// # Examples
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_kib_bytes!(4);
-///
-/// assert_eq!(result, 4096u128);
-/// ```
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_kib_bytes!(2.5, f64);
-///
-/// assert_eq!(result, 2560u128);
-/// ```
-macro_rules! n_kib_bytes {
-    () => {1024u128};
-    ( $x:expr ) => {$x as u128 * 1024u128};
-    ( $x:expr, $t:ty ) => {($x * (1048576 as $t)) as u128 / 1024u128};
-}
-
-#[macro_export]
-/// Convert n MB to bytes.
-///
-/// # Examples
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_mb_bytes!(4);
-///
-/// assert_eq!(result, 4000000u128);
-/// ```
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_mb_bytes!(2.5, f64);
-///
-/// assert_eq!(result, 2500000u128);
-/// ```
-macro_rules! n_mb_bytes {
-    () => {1000000u128};
-    ( $x:expr ) => {$x as u128 * 1000000u128};
-    ( $x:expr, $t:ty ) => {($x * (1000000 as $t)) as u128};
-}
-
-#[macro_export]
-/// Convert n MiB to bytes.
-///
-/// # Examples
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_mib_bytes!(4);
-///
-/// assert_eq!(result, 4194304u128);
-/// ```
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_mib_bytes!(2.5, f64);
-///
-/// assert_eq!(result, 2621440u128);
-/// ```
-macro_rules! n_mib_bytes {
-    () => {1048576u128};
-    ( $x:expr ) => {$x as u128 * 1048576u128};
-    ( $x:expr, $t:ty ) => {($x * (1048576 as $t)) as u128};
-}
-
-#[macro_export]
-/// Convert n GB to bytes.
-///
-/// # Examples
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_gb_bytes!(4);
-///
-/// assert_eq!(result, 4000000000u128);
-/// ```
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_gb_bytes!(2.5, f64);
-///
-/// assert_eq!(result, 2500000000u128);
-/// ```
-macro_rules! n_gb_bytes {
-    () => {1000000000u128};
-    ( $x:expr ) => {$x as u128 * 1000000000u128};
-    ( $x:expr, $t:ty ) => {($x * (1000000 as $t)) as u128 * 1000u128};
-}
-
-#[macro_export]
-/// Convert n GiB to bytes.
-///
-/// # Examples
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_gib_bytes!(4);
-///
-/// assert_eq!(result, 4294967296u128);
-/// ```
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_gib_bytes!(2.5, f64);
-///
-/// assert_eq!(result, 2684354560u128);
-/// ```
-macro_rules! n_gib_bytes {
-    () => {1073741824u128};
-    ( $x:expr ) => {$x as u128 * 1073741824u128};
-    ( $x:expr, $t:ty ) => {($x * (1048576 as $t)) as u128 * 1024u128};
-}
-
-#[macro_export]
-/// Convert n TB to bytes.
-///
-/// # Examples
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_tb_bytes!(4);
-///
-/// assert_eq!(result, 4000000000000u128);
-/// ```
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_tb_bytes!(2.5, f64);
-///
-/// assert_eq!(result, 2500000000000u128);
-/// ```
-macro_rules! n_tb_bytes {
-    () => {1000000000000u128};
-    ( $x:expr ) => {$x as u128 * 1000000000000u128};
-    ( $x:expr, $t:ty ) => {($x * (1000000 as $t)) as u128 * 1000000u128};
-}
-
-#[macro_export]
-/// Convert n TiB to bytes.
-///
-/// # Examples
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_tib_bytes!(4);
-///
-/// assert_eq!(result, 4398046511104u128);
-/// ```
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_tib_bytes!(2.5, f64);
-///
-/// assert_eq!(result, 2748779069440u128);
-/// ```
-macro_rules! n_tib_bytes {
-    () => {1099511627776u128};
-    ( $x:expr ) => {$x as u128 * 1099511627776u128};
-    ( $x:expr, $t:ty ) => {($x * (1048576 as $t)) as u128 * 1048576u128};
-}
-
-#[macro_export]
-/// Convert n PB to bytes.
-///
-/// # Examples
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_pb_bytes!(4);
-///
-/// assert_eq!(result, 4000000000000000u128);
-/// ```
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_pb_bytes!(2.5, f64);
-///
-/// assert_eq!(result, 2500000000000000u128);
-/// ```
-macro_rules! n_pb_bytes {
-    () => {1000000000000000u128};
-    ( $x:expr ) => {$x as u128 * 1000000000000000u128};
-    ( $x:expr, $t:ty ) => {($x * (1000000 as $t)) as u128 * 1000000000u128};
-}
-
-#[macro_export]
-/// Convert n PiB to bytes.
-///
-/// # Examples
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_pib_bytes!(4);
-///
-/// assert_eq!(result, 4503599627370496u128);
-/// ```
-///
-/// ```
-/// #[macro_use] extern crate byte_unit;
-///
-/// let result = n_pib_bytes!(2.5, f64);
-///
-/// assert_eq!(result, 2814749767106560u128);
-/// ```
-macro_rules! n_pib_bytes {
-    () => {1125899906842624u128};
-    ( $x:expr ) => {$x as u128 * 1125899906842624u128};
-    ( $x:expr, $t:ty ) => {($x * (1048576 as $t)) as u128 * 1073741824u128};
-}
 
 lazy_static! {
     static ref BYTE_RE: Regex = {
@@ -274,65 +150,7 @@ lazy_static! {
     };
 }
 
-#[derive(Debug, PartialEq, Clone)]
-/// The unit of bytes.
-pub enum ByteUnit {
-    /// 1 B = 1 byte
-    B,
-    /// 1 KB = 1000 bytes
-    KB,
-    /// 1 KiB = 1024 bytes
-    KiB,
-    /// 1 MB = 1000000 bytes
-    MB,
-    /// 1 MiB = 1048576 bytes
-    MiB,
-    /// 1 GB = 1000000000 bytes
-    GB,
-    /// 1 GiB = 1073741824 bytes
-    GiB,
-    /// 1 TB = 1000000000000 bytes
-    TB,
-    /// 1 TiB = 1099511627776 bytes
-    TiB,
-    /// 1 PB = 1000000000000000 bytes
-    PB,
-    /// 1 PiB = 1125899906842624 bytes
-    PiB,
-}
-
-impl ToString for ByteUnit {
-    /// Get the unit string.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// extern crate byte_unit;
-    ///
-    /// use byte_unit::ByteUnit;
-    ///
-    /// let result = ByteUnit::KB.to_string();
-    ///
-    /// assert_eq!(result, "KB");
-    /// ```
-    fn to_string(&self) -> String {
-        match self {
-            ByteUnit::B => String::from("B"),
-            ByteUnit::KB => String::from("KB"),
-            ByteUnit::KiB => String::from("KiB"),
-            ByteUnit::MB => String::from("MB"),
-            ByteUnit::MiB => String::from("MiB"),
-            ByteUnit::GB => String::from("GB"),
-            ByteUnit::GiB => String::from("GiB"),
-            ByteUnit::TB => String::from("TB"),
-            ByteUnit::TiB => String::from("TiB"),
-            ByteUnit::PB => String::from("PB"),
-            ByteUnit::PiB => String::from("PiB"),
-        }
-    }
-}
-
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 /// Different error types for Byte.
 pub enum ByteError {
     /// The value used for creating a `Byte` object is incorrect. (`from_unit`, `from_string`)
@@ -343,77 +161,22 @@ pub enum ByteError {
     ParseError,
 }
 
-#[derive(Debug)]
-struct ByteInner {
+#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash)]
+/// Represent the n-bytes data. Use associated functions: `from_unit`, `from_bytes`, `from_string`, to create the instance.
+pub struct Byte {
     bytes: u128
 }
 
-impl PartialEq for ByteInner {
-    fn eq(&self, other: &ByteInner) -> bool {
-        self.bytes == other.bytes
-    }
-}
-
-#[derive(Debug)]
-/// Represent the n-bytes data. Use associated functions: `from_unit`, `from_bytes`, `from_string`, to create the instance.
-pub struct Byte(ByteInner);
-
-impl PartialEq for Byte {
-    /// Deal with the logical numeric equivalent.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// extern crate byte_unit;
-    ///
-    /// use byte_unit::{Byte, ByteUnit};
-    ///
-    /// let byte1 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
-    /// let byte2 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
-    ///
-    /// assert_eq!(byte1, byte2);
-    /// ```
-    ///
-    /// ```
-    /// extern crate byte_unit;
-    ///
-    /// use byte_unit::{Byte, ByteUnit};
-    ///
-    /// let byte1 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
-    /// let byte2 = Byte::from_unit(1f64, ByteUnit::MiB).unwrap();
-    ///
-    /// assert_eq!(byte1, byte2);
-    /// ```
-    fn eq(&self, other: &Byte) -> bool {
-        self.0 == other.0
-    }
-}
-
-impl ToString for Byte {
-    /// Format the `Byte` object to bytes as string.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// extern crate byte_unit;
-    ///
-    /// use byte_unit::{Byte, ByteUnit};
-    ///
-    /// let byte = Byte::from_unit(1500f64, ByteUnit::KB).unwrap();
-    ///
-    /// let result = byte.to_string();
-    ///
-    /// assert_eq!(result, "1500000");
-    /// ```
-    fn to_string(&self) -> String {
-        format!("{}", self.0.bytes)
+impl Display for Byte {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
+        f.write_fmt(format_args!("{}", self.bytes))
     }
 }
 
 impl Byte {
     /// Create a new `Byte` object from a specified value and a unit. **Accuracy** should be taken care of.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```
     /// extern crate byte_unit;
@@ -429,16 +192,16 @@ impl Byte {
             return Err(ByteError::ValueIncorrect);
         }
 
-        let bytes = get_bytes(value, &unit);
+        let bytes = get_bytes(value, unit);
 
-        Ok(Byte(ByteInner {
+        Ok(Byte {
             bytes
-        }))
+        })
     }
 
     /// Create a new `Byte` object from bytes.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```
     /// extern crate byte_unit;
@@ -450,14 +213,14 @@ impl Byte {
     /// assert_eq!(result.get_bytes(), 1500000u128);
     /// ```
     pub fn from_bytes(bytes: u128) -> Byte {
-        Byte(ByteInner {
+        Byte {
             bytes
-        })
+        }
     }
 
     /// Create a new `Byte` object from string. **Accuracy** should be taken care of.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```
     /// extern crate byte_unit;
@@ -543,7 +306,7 @@ impl Byte {
 
     /// Get bytes represented by a `Byte` object.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```
     /// extern crate byte_unit;
@@ -569,12 +332,12 @@ impl Byte {
     /// assert_eq!(result, 50840000);
     /// ```
     pub fn get_bytes(&self) -> u128 {
-        self.0.bytes
+        self.bytes
     }
 
     /// Find the appropriate unit and value for `Byte` object. **Accuracy** should be taken care of.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```
     /// extern crate byte_unit;
@@ -600,78 +363,78 @@ impl Byte {
     /// assert_eq!(adjusted_byte.to_string(), "48.48 MiB");
     /// ```
     pub fn get_appropriate_unit(&self, binary_multiples: bool) -> AdjustedByte {
-        let bytes = self.0.bytes;
+        let bytes = self.bytes;
 
         if binary_multiples {
             if bytes > n_pib_bytes!() {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64 / n_pib_bytes!() as f64,
                     unit: ByteUnit::PiB,
-                })
+                }
             } else if bytes > n_tib_bytes!() {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64 / n_tib_bytes!() as f64,
                     unit: ByteUnit::TiB,
-                })
+                }
             } else if bytes > n_gib_bytes!() {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64 / n_gib_bytes!() as f64,
                     unit: ByteUnit::GiB,
-                })
+                }
             } else if bytes > n_mib_bytes!() {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64 / n_mib_bytes!() as f64,
                     unit: ByteUnit::MiB,
-                })
+                }
             } else if bytes > n_kib_bytes!() {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64 / n_kib_bytes!() as f64,
                     unit: ByteUnit::KiB,
-                })
+                }
             } else {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64,
                     unit: ByteUnit::B,
-                })
+                }
             }
         } else {
             if bytes > n_pb_bytes!() {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64 / n_pb_bytes!() as f64,
                     unit: ByteUnit::PB,
-                })
+                }
             } else if bytes > n_tb_bytes!() {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64 / n_tb_bytes!() as f64,
                     unit: ByteUnit::TB,
-                })
+                }
             } else if bytes > n_gb_bytes!() {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64 / n_gb_bytes!() as f64,
                     unit: ByteUnit::GB,
-                })
+                }
             } else if bytes > n_mb_bytes!() {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64 / n_mb_bytes!() as f64,
                     unit: ByteUnit::MB,
-                })
+                }
             } else if bytes > n_kb_bytes!() {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64 / n_kb_bytes!() as f64,
                     unit: ByteUnit::KB,
-                })
+                }
             } else {
-                AdjustedByte(AdjustedByteInner {
+                AdjustedByte {
                     value: bytes as f64,
                     unit: ByteUnit::B,
-                })
+                }
             }
         }
     }
 
     /// Adjust the unit and value for `Byte` object. **Accuracy** should be taken care of.
     ///
-    /// # Examples
+    /// ## Examples
     ///
     /// ```
     /// extern crate byte_unit;
@@ -697,7 +460,7 @@ impl Byte {
     /// assert_eq!(adjusted_byte.to_string(), "48.48 MiB");
     /// ```
     pub fn get_adjusted_unit(&self, unit: ByteUnit) -> AdjustedByte {
-        let bytes = self.0.bytes;
+        let bytes = self.bytes;
 
         let value = match unit {
             ByteUnit::B => bytes as f64,
@@ -713,28 +476,19 @@ impl Byte {
             ByteUnit::PiB => bytes as f64 / n_pib_bytes!() as f64,
         };
 
-        AdjustedByte(AdjustedByteInner {
+        AdjustedByte {
             value,
             unit,
-        })
+        }
     }
 }
 
-#[derive(Debug)]
-struct AdjustedByteInner {
+#[derive(Debug, Clone, Copy)]
+/// Generated from the `get_appropriate_unit` and `get_adjusted_unit` methods of a `Byte` object.
+pub struct AdjustedByte {
     value: f64,
     unit: ByteUnit,
 }
-
-impl PartialEq for AdjustedByteInner {
-    fn eq(&self, other: &AdjustedByteInner) -> bool {
-        self.value == other.value && self.unit == other.unit
-    }
-}
-
-#[derive(Debug)]
-/// Generated from the `get_appropriate_unit` and `get_adjusted_unit` methods of a `Byte` object.
-pub struct AdjustedByte(AdjustedByteInner);
 
 impl PartialEq for AdjustedByte {
     /// Deal with the logical numeric equivalent.
@@ -763,39 +517,15 @@ impl PartialEq for AdjustedByte {
     /// assert_eq!(byte1.get_appropriate_unit(true), byte2.get_appropriate_unit(false));
     /// ```
     fn eq(&self, other: &AdjustedByte) -> bool {
-        let s = &self.0;
-        let o = &other.0;
-
-        if s == o {
+        if self.value == other.value && self.unit == other.unit {
             return true;
         }
 
-        let self_value = get_bytes(s.value, &s.unit);
+        let self_value = get_bytes(self.value, self.unit);
 
-        let other_value = get_bytes(o.value, &o.unit);
+        let other_value = get_bytes(other.value, other.unit);
 
         self_value == other_value
-    }
-}
-
-impl ToString for AdjustedByte {
-    /// Format the `AdjustedByte` object to string. The number of fractional digits is 2.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// extern crate byte_unit;
-    ///
-    /// use byte_unit::{Byte, ByteUnit};
-    ///
-    /// let byte = Byte::from_unit(1500f64, ByteUnit::KB).unwrap();
-    ///
-    /// let result = byte.get_appropriate_unit(false).to_string();
-    ///
-    /// assert_eq!(result, "1.50 MB");
-    /// ```
-    fn to_string(&self) -> String {
-        self.format(2)
     }
 }
 
@@ -816,19 +546,36 @@ impl AdjustedByte {
     /// assert_eq!(result, "1.555 MB");
     /// ```
     pub fn format(&self, fractional_digits: usize) -> String {
-        format!("{:.*} {}", fractional_digits, self.0.value, self.0.unit.to_string())
+        format!("{:.*} {}", fractional_digits, self.value, self.unit.to_string())
     }
 
     pub fn get_value(&self) -> f64 {
-        self.0.value
+        self.value
     }
 
-    pub fn get_unit(&self) -> &ByteUnit {
-        &self.0.unit
+    pub fn get_unit(&self) -> ByteUnit {
+        self.unit
     }
 }
 
-fn get_bytes(value: f64, unit: &ByteUnit) -> u128 {
+impl Display for AdjustedByte {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
+        f.write_fmt(format_args!("{:.2} ", self.value))?;
+        Display::fmt(&self.unit, f)
+    }
+}
+
+impl Eq for AdjustedByte {}
+
+impl Hash for AdjustedByte {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        let bytes: [u8; 8] = unsafe { transmute(self.value) };
+        state.write(&bytes);
+        self.unit.hash(state);
+    }
+}
+
+fn get_bytes(value: f64, unit: ByteUnit) -> u128 {
     match unit {
         ByteUnit::B => value as u128,
         ByteUnit::KB => n_kb_bytes!(value, f64),
@@ -843,12 +590,3 @@ fn get_bytes(value: f64, unit: &ByteUnit) -> u128 {
         ByteUnit::PiB => n_pib_bytes!(value, f64)
     }
 }
-
-// TODO -----Test START-----
-
-#[cfg(test)]
-mod tests {
-    // use super::*;
-}
-
-// TODO -----Test END-----
