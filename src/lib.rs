@@ -146,12 +146,12 @@ use regex::Regex;
 
 lazy_static! {
     static ref BYTE_RE: Regex = {
-        Regex::new(r"^(\d+(\.\d+)?)[\s]*(\S{1,3})?$").unwrap()
+        Regex::new(r"^(\d+(\.\d+)?)[\s]*(?i)((([ptgmk])(i)?)?b?)$").unwrap()
     };
 }
 
 #[derive(Debug, PartialEq, Eq)]
-/// Different error types for Byte.
+/// Different error types for `Byte`.
 pub enum ByteError {
     /// The value used for creating a `Byte` object is incorrect. (`from_unit`, `from_string`)
     ValueIncorrect,
@@ -247,55 +247,109 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let result = Byte::from_string("8 b").unwrap(); // 8 bits
+    /// let result = Byte::from_string("8 B").unwrap(); // 8 bytes
     ///
-    /// assert_eq!(result.get_bytes(), 1u128);
+    /// assert_eq!(result.get_bytes(), 8u128);
+    /// ```
+    ///
+    /// ```
+    /// extern crate byte_unit;
+    ///
+    /// use byte_unit::{Byte, ByteUnit};
+    ///
+    /// let result = Byte::from_string("8").unwrap(); // 8 bytes
+    ///
+    /// assert_eq!(result.get_bytes(), 8u128);
+    /// ```
+    ///
+    /// ```
+    /// extern crate byte_unit;
+    ///
+    /// use byte_unit::{Byte, ByteUnit};
+    ///
+    /// let result = Byte::from_string("8 b").unwrap(); // 8 bytes
+    ///
+    /// assert_eq!(result.get_bytes(), 8u128);
+    /// ```
+    ///
+    /// ```
+    /// extern crate byte_unit;
+    ///
+    /// use byte_unit::{Byte, ByteUnit};
+    ///
+    /// let result = Byte::from_string("8 kb").unwrap(); // 8K bytes
+    ///
+    /// assert_eq!(result.get_bytes(), 8000u128);
+    /// ```
+    ///
+    /// ```
+    /// extern crate byte_unit;
+    ///
+    /// use byte_unit::{Byte, ByteUnit};
+    ///
+    /// let result = Byte::from_string("8 kib").unwrap(); // 8Ki bytes
+    ///
+    /// assert_eq!(result.get_bytes(), 8192u128);
+    /// ```
+    ///
+    /// ```
+    /// extern crate byte_unit;
+    ///
+    /// use byte_unit::{Byte, ByteUnit};
+    ///
+    /// let result = Byte::from_string("8 k").unwrap(); // 8K bytes
+    ///
+    /// assert_eq!(result.get_bytes(), 8000u128);
     /// ```
     pub fn from_string<S: AsRef<str>>(string: S) -> Result<Byte, ByteError> {
         let string = string.as_ref();
 
         let string = string.trim();
 
-        let regex = &*BYTE_RE;
-
-        let captures = regex.captures(string);
+        let captures = BYTE_RE.captures(string);
 
         match captures {
             Some(captures) => {
                 let unit = match captures.get(3) {
-                    Some(v) => v.as_str(),
-                    None => "B"
+                    Some(_) => {
+                        match captures.get(5) {
+                            Some(m) => {
+                                let u: String = m.as_str().to_lowercase();
+
+                                match captures.get(6) {
+                                    Some(_) => {
+                                        match u.as_str() {
+                                            "k" => ByteUnit::KiB,
+                                            "m" => ByteUnit::MiB,
+                                            "g" => ByteUnit::GiB,
+                                            "t" => ByteUnit::TiB,
+                                            "p" => ByteUnit::PiB,
+                                            _ => unreachable!()
+                                        }
+                                    }
+                                    None => {
+                                        match u.as_str() {
+                                            "k" => ByteUnit::KB,
+                                            "m" => ByteUnit::MB,
+                                            "g" => ByteUnit::GB,
+                                            "t" => ByteUnit::TB,
+                                            "p" => ByteUnit::PB,
+                                            _ => unreachable!()
+                                        }
+                                    }
+                                }
+                            }
+                            None => {
+                                ByteUnit::B
+                            }
+                        }
+                    }
+                    None => ByteUnit::B
                 };
 
                 let value = match captures[1].parse::<f64>() {
-                    Ok(v) => {
-                        match unit {
-                            "b" => {
-                                if v.floor() != v || v % 8f64 != 0f64 {
-                                    return Err(ByteError::ValueIncorrect);
-                                }
-
-                                v / 8f64
-                            }
-                            _ => v
-                        }
-                    }
+                    Ok(v) => v,
                     Err(_) => return Err(ByteError::ParseError)
-                };
-
-                let unit = match unit.to_uppercase().as_str() {
-                    "B" => ByteUnit::B,
-                    "KB" | "K" => ByteUnit::KB,
-                    "KIB" => ByteUnit::KiB,
-                    "MB" | "M" => ByteUnit::MB,
-                    "MIB" => ByteUnit::MiB,
-                    "GB" | "G" => ByteUnit::GB,
-                    "GIB" => ByteUnit::GiB,
-                    "TB" | "T" => ByteUnit::TB,
-                    "TIB" => ByteUnit::TiB,
-                    "PB" | "P" => ByteUnit::PB,
-                    "PIB" => ByteUnit::PiB,
-                    _ => return Err(ByteError::UnitIncorrect)
                 };
 
                 Byte::from_unit(value, unit)
