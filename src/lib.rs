@@ -168,6 +168,7 @@ pub struct Byte {
 }
 
 impl Display for Byte {
+    #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
         f.write_fmt(format_args!("{}", self.bytes))
     }
@@ -187,6 +188,7 @@ impl Byte {
     ///
     /// assert_eq!(result.get_bytes(), 1500000u128);
     /// ```
+    #[inline]
     pub fn from_unit(value: f64, unit: ByteUnit) -> Result<Byte, ByteError> {
         if value < 0f64 {
             return Err(ByteError::ValueIncorrect);
@@ -212,6 +214,7 @@ impl Byte {
     ///
     /// assert_eq!(result.get_bytes(), 1500000u128);
     /// ```
+    #[inline]
     pub fn from_bytes(bytes: u128) -> Byte {
         Byte {
             bytes
@@ -385,6 +388,7 @@ impl Byte {
     ///
     /// assert_eq!(result, 50840000);
     /// ```
+    #[inline]
     pub fn get_bytes(&self) -> u128 {
         self.bytes
     }
@@ -570,6 +574,7 @@ impl PartialEq for AdjustedByte {
     ///
     /// assert_eq!(byte1.get_appropriate_unit(true), byte2.get_appropriate_unit(false));
     /// ```
+    #[inline]
     fn eq(&self, other: &AdjustedByte) -> bool {
         if self.value == other.value && self.unit == other.unit {
             return true;
@@ -599,14 +604,17 @@ impl AdjustedByte {
     ///
     /// assert_eq!(result, "1.555 MB");
     /// ```
+    #[inline]
     pub fn format(&self, fractional_digits: usize) -> String {
         format!("{:.*} {}", fractional_digits, self.value, self.unit.to_string())
     }
 
+    #[inline]
     pub fn get_value(&self) -> f64 {
         self.value
     }
 
+    #[inline]
     pub fn get_unit(&self) -> ByteUnit {
         self.unit
     }

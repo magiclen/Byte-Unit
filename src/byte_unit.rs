@@ -37,20 +37,16 @@ pub enum ByteUnit {
 }
 
 impl Display for ByteUnit {
+    #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-        match self {
-            ByteUnit::B => f.write_str("B"),
-            ByteUnit::KB => f.write_str("KB"),
-            ByteUnit::KiB => f.write_str("KiB"),
-            ByteUnit::MB => f.write_str("MB"),
-            ByteUnit::MiB => f.write_str("MiB"),
-            ByteUnit::GB => f.write_str("GB"),
-            ByteUnit::GiB => f.write_str("GiB"),
-            ByteUnit::TB => f.write_str("TB"),
-            ByteUnit::TiB => f.write_str("TiB"),
-            ByteUnit::PB => f.write_str("PB"),
-            ByteUnit::PiB => f.write_str("PiB"),
-        }
+        f.write_str(self.as_ref())
+    }
+}
+
+impl AsRef<str> for ByteUnit {
+    #[inline]
+    fn as_ref(&self) -> &str {
+        self.as_str()
     }
 }
 
@@ -115,6 +111,42 @@ impl ByteUnit {
                 }
             }
             None => Ok(ByteUnit::B)
+        }
+    }
+
+    /// Use string slice to represent this `ByteUnit`.
+    ///
+    /// ```
+    /// extern crate byte_unit;
+    ///
+    /// use byte_unit::ByteUnit;
+    ///
+    /// assert_eq!("B", ByteUnit::B.as_str());
+    /// assert_eq!("KB", ByteUnit::KB.as_str());
+    /// assert_eq!("KiB", ByteUnit::KiB.as_str());
+    /// assert_eq!("MB", ByteUnit::MB.as_str());
+    /// assert_eq!("MiB", ByteUnit::MiB.as_str());
+    /// assert_eq!("GB", ByteUnit::GB.as_str());
+    /// assert_eq!("GiB", ByteUnit::GiB.as_str());
+    /// assert_eq!("TB", ByteUnit::TB.as_str());
+    /// assert_eq!("TiB", ByteUnit::TiB.as_str());
+    /// assert_eq!("PB", ByteUnit::PB.as_str());
+    /// assert_eq!("PiB", ByteUnit::PiB.as_str());
+    /// ```
+    #[inline]
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            ByteUnit::B => "B",
+            ByteUnit::KB => "KB",
+            ByteUnit::KiB => "KiB",
+            ByteUnit::MB => "MB",
+            ByteUnit::MiB => "MiB",
+            ByteUnit::GB => "GB",
+            ByteUnit::GiB => "GiB",
+            ByteUnit::TB => "TB",
+            ByteUnit::TiB => "TiB",
+            ByteUnit::PB => "PB",
+            ByteUnit::PiB => "PiB",
         }
     }
 }
