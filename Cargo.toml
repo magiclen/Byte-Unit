@@ -1,11 +1,11 @@
 [package]
 name = "byte-unit"
-version = "2.1.0"
+version = "3.0.0"
 authors = ["Magic Len <len@magiclen.org>"]
 repository = "https://github.com/magiclen/byte-unit"
 homepage = "https://magiclen.org/byte-unit"
 keywords = ["byte", "unit", "kb", "mb", "gb"]
-categories = ["parser-implementations"]
+categories = ["no-std", "parser-implementations"]
 description= "A library for interaction with units of bytes."
 readme = "README.md"
 license = "MIT"
@@ -13,7 +13,3 @@ license = "MIT"
 [badges]
 travis-ci = { repository = "magiclen/Byte-Unit", branch = "master" }
 appveyor = { repository = "magiclen/Byte-Unit", branch = "master", service = "github" }
-
-[dependencies]
-regex = "1"
-lazy_static = "1.1.0"

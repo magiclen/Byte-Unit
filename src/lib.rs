@@ -35,14 +35,14 @@ assert_eq!(2500000000u128, result);
 
 The `Byte` structure can be used for representing a size of bytes.
 
-The `from_string` associated function can parse any **SIZE** string and return a `Byte` instance in common usage. The format of a **SIZE** string is like "123", "123KiB" or "50.84 MB".
+The `from_str` associated function can parse any **SIZE** string and return a `Byte` instance in common usage. The format of a **SIZE** string is like "123", "123KiB" or "50.84 MB".
 
 ```rust
 extern crate byte_unit;
 
 use byte_unit::Byte;
 
-let result = Byte::from_string("50.84 MB").unwrap();
+let result = Byte::from_str("50.84 MB").unwrap();
 
 assert_eq!(50840000u128, result.get_bytes());
 ```
@@ -78,7 +78,7 @@ extern crate byte_unit;
 
 use byte_unit::{Byte, ByteUnit};
 
-let byte = Byte::from_string("123KiB").unwrap();
+let byte = Byte::from_str("123KiB").unwrap();
 
 let adjusted_byte = byte.get_adjusted_unit(ByteUnit::KB);
 
@@ -128,41 +128,28 @@ assert_eq!("1.5 MB", adjusted_byte.format(1));
 ```
 */
 
-extern crate regex;
+#![no_std]
 
 #[macro_use]
-extern crate lazy_static;
+extern crate alloc;
 
 mod macros;
 mod byte_unit;
 
 pub use byte_unit::ByteUnit;
 
-use std::fmt::{self, Display, Formatter};
-use std::hash::{Hash, Hasher};
-use std::mem::transmute;
-
-use regex::Regex;
-
-lazy_static! {
-    static ref BYTE_RE: Regex = {
-        Regex::new(r"^(\d+(\.\d+)?)[\s]*(?i)((([ptgmk])(i)?)?b?)$").unwrap()
-    };
-}
+use alloc::string::String;
+use alloc::fmt::{self, Display, Formatter};
 
 #[derive(Debug, PartialEq, Eq)]
-/// Different error types for `Byte`.
+/// Different error types for `Byte` and `ByteUnit`.
 pub enum ByteError {
-    /// The value used for creating a `Byte` object is incorrect. (`from_unit`, `from_string`)
-    ValueIncorrect,
-    /// The unit used for creating a `Byte` object is incorrect. (`from_string`)
-    UnitIncorrect,
-    /// The string used for creating a `Byte` object is incorrect. (`from_string`)
-    ParseError,
+    ValueIncorrect(String),
+    UnitIncorrect(String),
 }
 
-#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash)]
-/// Represent the n-bytes data. Use associated functions: `from_unit`, `from_bytes`, `from_string`, to create the instance.
+#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq)]
+/// Represent the n-bytes data. Use associated functions: `from_unit`, `from_bytes`, `from_str`, to create the instance.
 pub struct Byte {
     bytes: u128
 }
@@ -191,7 +178,7 @@ impl Byte {
     #[inline]
     pub fn from_unit(value: f64, unit: ByteUnit) -> Result<Byte, ByteError> {
         if value < 0f64 {
-            return Err(ByteError::ValueIncorrect);
+            return Err(ByteError::ValueIncorrect(format!("The value `{}` for creating a `Byte` instance is negative.", value)));
         }
 
         let bytes = get_bytes(value, unit);
@@ -230,7 +217,7 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let result = Byte::from_string("123KiB").unwrap();
+    /// let result = Byte::from_str("123KiB").unwrap();
     ///
     /// assert_eq!(result, Byte::from_unit(123f64, ByteUnit::KiB).unwrap());
     /// ```
@@ -240,7 +227,7 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let result = Byte::from_string("50.84 MB").unwrap();
+    /// let result = Byte::from_str("50.84 MB").unwrap();
     ///
     /// assert_eq!(result, Byte::from_unit(50.84f64, ByteUnit::MB).unwrap());
     /// ```
@@ -250,7 +237,7 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let result = Byte::from_string("8 B").unwrap(); // 8 bytes
+    /// let result = Byte::from_str("8 B").unwrap(); // 8 bytes
     ///
     /// assert_eq!(result.get_bytes(), 8u128);
     /// ```
@@ -260,7 +247,7 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let result = Byte::from_string("8").unwrap(); // 8 bytes
+    /// let result = Byte::from_str("8").unwrap(); // 8 bytes
     ///
     /// assert_eq!(result.get_bytes(), 8u128);
     /// ```
@@ -270,7 +257,7 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let result = Byte::from_string("8 b").unwrap(); // 8 bytes
+    /// let result = Byte::from_str("8 b").unwrap(); // 8 bytes
     ///
     /// assert_eq!(result.get_bytes(), 8u128);
     /// ```
@@ -280,7 +267,7 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let result = Byte::from_string("8 kb").unwrap(); // 8K bytes
+    /// let result = Byte::from_str("8 kb").unwrap(); // 8K bytes
     ///
     /// assert_eq!(result.get_bytes(), 8000u128);
     /// ```
@@ -290,7 +277,7 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let result = Byte::from_string("8 kib").unwrap(); // 8Ki bytes
+    /// let result = Byte::from_str("8 kib").unwrap(); // 8Ki bytes
     ///
     /// assert_eq!(result.get_bytes(), 8192u128);
     /// ```
@@ -300,65 +287,198 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let result = Byte::from_string("8 k").unwrap(); // 8K bytes
+    /// let result = Byte::from_str("8 k").unwrap(); // 8K bytes
     ///
     /// assert_eq!(result.get_bytes(), 8000u128);
     /// ```
-    pub fn from_string<S: AsRef<str>>(string: S) -> Result<Byte, ByteError> {
-        let string = string.as_ref();
+    pub fn from_str<S: AsRef<str>>(s: S) -> Result<Byte, ByteError> {
+        let s = s.as_ref().trim();
 
-        let string = string.trim();
+        let mut chars = s.chars();
 
-        let captures = BYTE_RE.captures(string);
+        let mut value = match chars.next() {
+            Some(c) => match c {
+                '0'..='9' => (c as u8 - b'0') as f64,
+                _ => return Err(ByteError::ValueIncorrect(format!("The character {:?} is not a number.", c)))
+            }
+            None => return Err(ByteError::ValueIncorrect(String::from("No value.")))
+        };
 
-        match captures {
-            Some(captures) => {
-                let unit = match captures.get(3) {
-                    Some(_) => {
-                        match captures.get(5) {
-                            Some(m) => {
-                                let u: String = m.as_str().to_lowercase();
+        let c = 'outer: loop {
+            match chars.next() {
+                Some(c) => match c {
+                    '0'..='9' => {
+                        value = value * 10.0 + (c as u8 - b'0') as f64;
+                    }
+                    '.' => {
+                        let mut i = 0.1;
 
-                                match captures.get(6) {
-                                    Some(_) => {
-                                        match u.as_str() {
-                                            "k" => ByteUnit::KiB,
-                                            "m" => ByteUnit::MiB,
-                                            "g" => ByteUnit::GiB,
-                                            "t" => ByteUnit::TiB,
-                                            "p" => ByteUnit::PiB,
-                                            _ => unreachable!()
+                        loop {
+                            match chars.next() {
+                                Some(c) => {
+                                    if c >= '0' && c <= '9' {
+                                        value += (c as u8 - b'0') as f64 * i;
+
+                                        i /= 10.0;
+                                    } else {
+                                        if i == 0.1 {
+                                            return Err(ByteError::ValueIncorrect(format!("The character {:?} is not a number.", c)));
                                         }
-                                    }
-                                    None => {
-                                        match u.as_str() {
-                                            "k" => ByteUnit::KB,
-                                            "m" => ByteUnit::MB,
-                                            "g" => ByteUnit::GB,
-                                            "t" => ByteUnit::TB,
-                                            "p" => ByteUnit::PB,
-                                            _ => unreachable!()
+
+                                        match c {
+                                            ' ' => {
+                                                loop {
+                                                    match chars.next() {
+                                                        Some(c) => {
+                                                            match c {
+                                                                ' ' => (),
+                                                                _ => break 'outer Some(c)
+                                                            }
+                                                        }
+                                                        None => break 'outer None
+                                                    }
+                                                }
+                                            }
+                                            _ => break 'outer Some(c)
                                         }
                                     }
                                 }
-                            }
-                            None => {
-                                ByteUnit::B
+                                None => {
+                                    if i == 0.1 {
+                                        return Err(ByteError::ValueIncorrect(format!("The character {:?} is not a number.", c)));
+                                    }
+
+                                    break 'outer None;
+                                }
                             }
                         }
                     }
-                    None => ByteUnit::B
-                };
-
-                let value = match captures[1].parse::<f64>() {
-                    Ok(v) => v,
-                    Err(_) => return Err(ByteError::ParseError)
-                };
-
-                Byte::from_unit(value, unit)
+                    ' ' => loop {
+                        match chars.next() {
+                            Some(c) => {
+                                match c {
+                                    ' ' => (),
+                                    _ => break 'outer Some(c)
+                                }
+                            }
+                            None => break 'outer None
+                        }
+                    }
+                    _ => break 'outer Some(c)
+                }
+                None => break None
             }
-            None => Err(ByteError::ParseError)
-        }
+        };
+
+        let unit = match c {
+            Some(c) => {
+                match c.to_ascii_uppercase() {
+                    'B' => if let Some(_) = chars.next() {
+                        return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)));
+                    } else {
+                        ByteUnit::B
+                    }
+                    'K' => match chars.next() {
+                        Some(c) => match c.to_ascii_uppercase() {
+                            'I' => match chars.next() {
+                                Some(c) => match c.to_ascii_uppercase() {
+                                    'B' => ByteUnit::KiB,
+                                    _ => return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
+                                }
+                                None => ByteUnit::KiB
+                            }
+                            'B' => if let Some(_) = chars.next() {
+                                return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)));
+                            } else {
+                                ByteUnit::KB
+                            }
+                            _ => return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
+                        }
+                        None => ByteUnit::KB
+                    }
+                    'M' => match chars.next() {
+                        Some(c) => match c.to_ascii_uppercase() {
+                            'I' => match chars.next() {
+                                Some(c) => match c.to_ascii_uppercase() {
+                                    'B' => ByteUnit::MiB,
+                                    _ => return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
+                                }
+                                None => ByteUnit::MiB
+                            }
+                            'B' => if let Some(_) = chars.next() {
+                                return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)));
+                            } else {
+                                ByteUnit::MB
+                            },
+                            _ => return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
+                        }
+                        None => ByteUnit::MB
+                    },
+                    'G' => match chars.next() {
+                        Some(c) => match c.to_ascii_uppercase() {
+                            'I' => match chars.next() {
+                                Some(c) => match c.to_ascii_uppercase() {
+                                    'B' => ByteUnit::GiB,
+                                    _ => return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
+                                }
+                                None => ByteUnit::GiB
+                            }
+                            'B' => if let Some(_) = chars.next() {
+                                return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)));
+                            } else {
+                                ByteUnit::GB
+                            },
+                            _ => return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
+                        }
+                        None => ByteUnit::GB
+                    },
+                    'T' => match chars.next() {
+                        Some(c) => match c.to_ascii_uppercase() {
+                            'I' => match chars.next() {
+                                Some(c) => match c.to_ascii_uppercase() {
+                                    'B' => ByteUnit::TiB,
+                                    _ => return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
+                                }
+                                None => ByteUnit::TiB
+                            }
+                            'B' => if let Some(_) = chars.next() {
+                                return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)));
+                            } else {
+                                ByteUnit::TB
+                            },
+                            _ => return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
+                        }
+                        None => ByteUnit::TB
+                    },
+                    'P' => match chars.next() {
+                        Some(c) => match c.to_ascii_uppercase() {
+                            'I' => match chars.next() {
+                                Some(c) => match c.to_ascii_uppercase() {
+                                    'B' => ByteUnit::PiB,
+                                    _ => return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
+                                }
+                                None => ByteUnit::PiB
+                            }
+                            'B' => if let Some(_) = chars.next() {
+                                return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)));
+                            } else {
+                                ByteUnit::PB
+                            },
+                            _ => return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
+                        }
+                        None => ByteUnit::PB
+                    },
+                    _ => return Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B', a 'K', a 'M', a 'G', a 'T', a 'P' or no character is expected.", c)))
+                }
+            }
+            None => ByteUnit::B
+        };
+
+        let bytes = get_bytes(value, unit);
+
+        Ok(Byte {
+            bytes
+        })
     }
 
     /// Get bytes represented by a `Byte` object.
@@ -370,7 +490,7 @@ impl Byte {
     ///
     /// use byte_unit::Byte;
     ///
-    /// let byte = Byte::from_string("123KiB").unwrap();
+    /// let byte = Byte::from_str("123KiB").unwrap();
     ///
     /// let result = byte.get_bytes();
     ///
@@ -382,7 +502,7 @@ impl Byte {
     ///
     /// use byte_unit::Byte;
     ///
-    /// let byte = Byte::from_string("50.84 MB").unwrap();
+    /// let byte = Byte::from_str("50.84 MB").unwrap();
     ///
     /// let result = byte.get_bytes();
     ///
@@ -402,7 +522,7 @@ impl Byte {
     ///
     /// use byte_unit::Byte;
     ///
-    /// let byte = Byte::from_string("123KiB").unwrap();
+    /// let byte = Byte::from_str("123KiB").unwrap();
     ///
     /// let adjusted_byte = byte.get_appropriate_unit(false);
     ///
@@ -414,7 +534,7 @@ impl Byte {
     ///
     /// use byte_unit::Byte;
     ///
-    /// let byte = Byte::from_string("50.84 MB").unwrap();
+    /// let byte = Byte::from_str("50.84 MB").unwrap();
     ///
     /// let adjusted_byte = byte.get_appropriate_unit(true);
     ///
@@ -499,7 +619,7 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let byte = Byte::from_string("123KiB").unwrap();
+    /// let byte = Byte::from_str("123KiB").unwrap();
     ///
     /// let adjusted_byte = byte.get_adjusted_unit(ByteUnit::KB);
     ///
@@ -511,7 +631,7 @@ impl Byte {
     ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
-    /// let byte = Byte::from_string("50.84 MB").unwrap();
+    /// let byte = Byte::from_str("50.84 MB").unwrap();
     ///
     /// let adjusted_byte = byte.get_adjusted_unit(ByteUnit::MiB);
     ///
@@ -588,6 +708,8 @@ impl PartialEq for AdjustedByte {
     }
 }
 
+impl Eq for AdjustedByte {}
+
 impl AdjustedByte {
     /// Format the `AdjustedByte` object to string.
     ///
@@ -606,7 +728,7 @@ impl AdjustedByte {
     /// ```
     #[inline]
     pub fn format(&self, fractional_digits: usize) -> String {
-        format!("{:.*} {}", fractional_digits, self.value, self.unit.to_string())
+        format!("{:.*} {}", fractional_digits, self.value, self.unit)
     }
 
     #[inline]
@@ -624,16 +746,6 @@ impl Display for AdjustedByte {
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
         f.write_fmt(format_args!("{:.2} ", self.value))?;
         Display::fmt(&self.unit, f)
-    }
-}
-
-impl Eq for AdjustedByte {}
-
-impl Hash for AdjustedByte {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        let bytes: [u8; 8] = unsafe { transmute(self.value) };
-        state.write(&bytes);
-        self.unit.hash(state);
     }
 }
 

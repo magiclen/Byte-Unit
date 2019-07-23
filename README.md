@@ -38,14 +38,14 @@ assert_eq!(2500000000u128, result);
 
 The `Byte` structure can be used for representing a size of bytes.
 
-The `from_string` associated function can parse any **SIZE** string and return a `Byte` instance in common usage. The format of a **SIZE** string is like "123", "123KiB" or "50.84 MB".
+The `from_str` associated function can parse any **SIZE** string and return a `Byte` instance in common usage. The format of a **SIZE** string is like "123", "123KiB" or "50.84 MB".
 
 ```rust
 extern crate byte_unit;
 
 use byte_unit::Byte;
 
-let result = Byte::from_string("50.84 MB").unwrap();
+let result = Byte::from_str("50.84 MB").unwrap();
 
 assert_eq!(50840000u128, result.get_bytes());
 ```
@@ -81,7 +81,7 @@ extern crate byte_unit;
 
 use byte_unit::{Byte, ByteUnit};
 
-let byte = Byte::from_string("123KiB").unwrap();
+let byte = Byte::from_str("123KiB").unwrap();
 
 let adjusted_byte = byte.get_adjusted_unit(ByteUnit::KB);
 

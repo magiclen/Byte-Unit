@@ -1,15 +1,8 @@
-use crate::regex::Regex;
 use crate::ByteError;
 
-use std::fmt::{self, Display, Formatter};
+use alloc::fmt::{self, Display, Formatter};
 
-lazy_static! {
-    static ref BYTE_UNIT_RE: Regex = {
-        Regex::new(r"^(?i)((([ptgmk])(i)?)?b?)$").unwrap()
-    };
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 /// The unit of bytes.
 pub enum ByteUnit {
     /// 1 B = 1 byte
@@ -74,40 +67,111 @@ impl ByteUnit {
     /// assert_eq!(ByteUnit::PiB, ByteUnit::from_str("PiB").unwrap());
     /// ```
     pub fn from_str<S: AsRef<str>>(unit: S) -> Result<ByteUnit, ByteError> {
-        let captures = BYTE_UNIT_RE.captures(unit.as_ref()).ok_or(ByteError::UnitIncorrect)?;
+        let s = unit.as_ref().trim();
 
-        match captures.get(1) {
-            Some(_) => {
-                match captures.get(3) {
-                    Some(m) => {
-                        let u: String = m.as_str().to_lowercase();
+        let mut chars = s.chars();
 
-                        match captures.get(4) {
-                            Some(_) => {
-                                match u.as_str() {
-                                    "k" => Ok(ByteUnit::KiB),
-                                    "m" => Ok(ByteUnit::MiB),
-                                    "g" => Ok(ByteUnit::GiB),
-                                    "t" => Ok(ByteUnit::TiB),
-                                    "p" => Ok(ByteUnit::PiB),
-                                    _ => unreachable!()
-                                }
-                            }
-                            None => {
-                                match u.as_str() {
-                                    "k" => Ok(ByteUnit::KB),
-                                    "m" => Ok(ByteUnit::MB),
-                                    "g" => Ok(ByteUnit::GB),
-                                    "t" => Ok(ByteUnit::TB),
-                                    "p" => Ok(ByteUnit::PB),
-                                    _ => unreachable!()
-                                }
-                            }
-                        }
-                    }
-                    None => {
+        match chars.next() {
+            Some(c) => {
+                match c.to_ascii_uppercase() {
+                    'B' => if let Some(_) = chars.next() {
+                        Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
+                    } else {
                         Ok(ByteUnit::B)
                     }
+                    'K' => match chars.next() {
+                        Some(c) => match c.to_ascii_uppercase() {
+                            'I' => match chars.next() {
+                                Some(c) => match c.to_ascii_uppercase() {
+                                    'B' => Ok(ByteUnit::KiB),
+                                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
+                                }
+                                None => Ok(ByteUnit::KiB)
+                            }
+                            'B' => if let Some(_) = chars.next() {
+                                Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
+                            } else {
+                                Ok(ByteUnit::KB)
+                            }
+                            _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
+                        }
+                        None => Ok(ByteUnit::KB)
+                    }
+                    'M' => match chars.next() {
+                        Some(c) => match c.to_ascii_uppercase() {
+                            'I' => match chars.next() {
+                                Some(c) => match c.to_ascii_uppercase() {
+                                    'B' => Ok(ByteUnit::MiB),
+                                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
+                                }
+                                None => Ok(ByteUnit::MiB)
+                            }
+                            'B' => if let Some(_) = chars.next() {
+                                Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
+                            } else {
+                                Ok(ByteUnit::MB)
+                            },
+                            _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
+                        }
+                        None => Ok(ByteUnit::MB)
+                    },
+                    'G' => match chars.next() {
+                        Some(c) => match c.to_ascii_uppercase() {
+                            'I' => match chars.next() {
+                                Some(c) => match c.to_ascii_uppercase() {
+                                    'B' => Ok(ByteUnit::GiB),
+                                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
+                                }
+                                None => Ok(ByteUnit::GiB)
+                            }
+                            'B' => if let Some(_) = chars.next() {
+                                Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
+                            } else {
+                                Ok(ByteUnit::GB)
+                            },
+                            _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
+                        }
+                        None => Ok(ByteUnit::GB)
+                    },
+                    'T' => match chars.next() {
+                        Some(c) => match c.to_ascii_uppercase() {
+                            'I' => match chars.next() {
+                                Some(c) => match c.to_ascii_uppercase() {
+                                    'B' => Ok(ByteUnit::TiB),
+                                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
+                                }
+                                None => {
+                                    Ok(ByteUnit::TiB)
+                                }
+                            }
+                            'B' => if let Some(_) = chars.next() {
+                                Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
+                            } else {
+                                Ok(ByteUnit::TB)
+                            },
+                            _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
+                        }
+                        None => Ok(ByteUnit::TB)
+                    },
+                    'P' => match chars.next() {
+                        Some(c) => match c.to_ascii_uppercase() {
+                            'I' => match chars.next() {
+                                Some(c) => match c.to_ascii_uppercase() {
+                                    'B' => Ok(ByteUnit::PiB),
+                                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
+                                }
+                                None => Ok(ByteUnit::PiB)
+                            }
+                            'B' => if let Some(_) = chars.next() {
+                                Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
+                            } else {
+                                Ok(ByteUnit::PB)
+                            },
+                            _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
+                        }
+                        None => Ok(ByteUnit::PB)
+                    },
+                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B', a 'K', a 'M', a 'G', a 'T', a 'P' or no character is expected.", c)))
                 }
             }
             None => Ok(ByteUnit::B)
