@@ -10,6 +10,6 @@ description= "A library for interaction with units of bytes."
 readme = "README.md"
 license = "MIT"
 
-[badges]
-travis-ci = { repository = "magiclen/Byte-Unit", branch = "master" }
-appveyor = { repository = "magiclen/Byte-Unit", branch = "master", service = "github" }
+[badges.travis-ci]
+repository = "magiclen/Byte-Unit"
+branch = "master"
