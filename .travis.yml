@@ -10,8 +10,6 @@ os:
   - osx
   - windows
 
-cache: cargo
-
 matrix:
   include:
     - rust: stable
@@ -32,8 +30,6 @@ matrix:
     - rust: stable
       os: windows
       env: TARGET=x86_64-pc-windows-gnu
-      cache:
-        cargo: false
       install:
         - rustup set default-host $TARGET
         - rustup default $TRAVIS_RUST_VERSION
@@ -44,8 +40,6 @@ matrix:
     - rust: beta
       os: windows
       env: TARGET=x86_64-pc-windows-gnu
-      cache:
-        cargo: false
       install:
         - rustup set default-host $TARGET
         - rustup default $TRAVIS_RUST_VERSION
@@ -56,8 +50,6 @@ matrix:
     - rust: nightly
       os: windows
       env: TARGET=x86_64-pc-windows-gnu
-      cache:
-        cargo: false
       install:
         - rustup set default-host $TARGET
         - rustup default $TRAVIS_RUST_VERSION
