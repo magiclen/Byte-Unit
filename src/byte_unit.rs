@@ -1,6 +1,7 @@
 use crate::ByteError;
 
 use alloc::fmt::{self, Display, Formatter};
+use alloc::str::FromStr;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 /// The unit of bytes.
@@ -43,6 +44,15 @@ impl AsRef<str> for ByteUnit {
     }
 }
 
+impl FromStr for ByteUnit {
+    type Err = ByteError;
+
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        ByteUnit::from_str(s)
+    }
+}
+
 impl ByteUnit {
     /// Get an instance of `ByteUnit` from a string slice.
     ///
@@ -66,6 +76,7 @@ impl ByteUnit {
     /// assert_eq!(ByteUnit::PB, ByteUnit::from_str("PB").unwrap());
     /// assert_eq!(ByteUnit::PiB, ByteUnit::from_str("PiB").unwrap());
     /// ```
+    #[allow(clippy::should_implement_trait, clippy::cognitive_complexity)]
     pub fn from_str<S: AsRef<str>>(unit: S) -> Result<ByteUnit, ByteError> {
         let s = unit.as_ref().trim();
 
@@ -74,7 +85,7 @@ impl ByteUnit {
         match chars.next() {
             Some(c) => {
                 match c.to_ascii_uppercase() {
-                    'B' => if let Some(_) = chars.next() {
+                    'B' => if chars.next().is_some() {
                         Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
                     } else {
                         Ok(ByteUnit::B)
@@ -88,7 +99,7 @@ impl ByteUnit {
                                 }
                                 None => Ok(ByteUnit::KiB)
                             }
-                            'B' => if let Some(_) = chars.next() {
+                            'B' => if chars.next().is_some() {
                                 Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
                             } else {
                                 Ok(ByteUnit::KB)
@@ -106,7 +117,7 @@ impl ByteUnit {
                                 }
                                 None => Ok(ByteUnit::MiB)
                             }
-                            'B' => if let Some(_) = chars.next() {
+                            'B' => if chars.next().is_some() {
                                 Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
                             } else {
                                 Ok(ByteUnit::MB)
@@ -124,7 +135,7 @@ impl ByteUnit {
                                 }
                                 None => Ok(ByteUnit::GiB)
                             }
-                            'B' => if let Some(_) = chars.next() {
+                            'B' => if chars.next().is_some() {
                                 Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
                             } else {
                                 Ok(ByteUnit::GB)
@@ -144,7 +155,7 @@ impl ByteUnit {
                                     Ok(ByteUnit::TiB)
                                 }
                             }
-                            'B' => if let Some(_) = chars.next() {
+                            'B' => if chars.next().is_some() {
                                 Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
                             } else {
                                 Ok(ByteUnit::TB)
@@ -162,7 +173,7 @@ impl ByteUnit {
                                 }
                                 None => Ok(ByteUnit::PiB)
                             }
-                            'B' => if let Some(_) = chars.next() {
+                            'B' => if chars.next().is_some() {
                                 Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
                             } else {
                                 Ok(ByteUnit::PB)
@@ -198,7 +209,7 @@ impl ByteUnit {
     /// assert_eq!("PiB", ByteUnit::PiB.as_str());
     /// ```
     #[inline]
-    pub fn as_str(&self) -> &'static str {
+    pub fn as_str(self) -> &'static str {
         match self {
             ByteUnit::B => "B",
             ByteUnit::KB => "KB",
