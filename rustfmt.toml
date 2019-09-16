@@ -6,7 +6,6 @@ format_code_in_doc_comments = true
 format_macro_matchers = true
 max_width = 100
 newline_style = "Unix"
-normalize_comments = true
 normalize_doc_attributes = true
 overflow_delimited_expr = true
 reorder_impl_items = true
