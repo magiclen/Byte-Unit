@@ -506,8 +506,8 @@ pub(crate) fn get_bytes(value: f64, unit: ByteUnit) -> u128 {
         ByteUnit::PiB => n_pib_bytes!(value, f64),
         ByteUnit::EB => n_eb_bytes!(value, f64),
         ByteUnit::EiB => n_eib_bytes!(value, f64),
-        ByteUnit::ZB => n_eb_bytes!(value, f64),
-        ByteUnit::ZiB => n_eib_bytes!(value, f64),
+        ByteUnit::ZB => n_zb_bytes!(value, f64),
+        ByteUnit::ZiB => n_zib_bytes!(value, f64),
     }
 }
 
