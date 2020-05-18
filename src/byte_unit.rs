@@ -1,56 +1,46 @@
-use crate::ByteError;
+use core::str::{Chars, FromStr};
 
 use alloc::fmt::{self, Display, Formatter};
-use alloc::str::FromStr;
+
+use crate::ByteError;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 /// The unit of bytes.
 pub enum ByteUnit {
     /// 1 B = 1 byte
     B,
-    /// 1 KB = 1000 bytes
+    /// 1 KB = 1000 bytes (10<sup>3</sup>)
     KB,
-    /// 1 KiB = 1024 bytes
+    /// 1 KiB = 1024 bytes (2<sup>10</sup>)
     KiB,
-    /// 1 MB = 1000000 bytes
+    /// 1 MB = 1000000 bytes (10<sup>6</sup>)
     MB,
-    /// 1 MiB = 1048576 bytes
+    /// 1 MiB = 1048576 bytes (2<sup>20</sup>)
     MiB,
-    /// 1 GB = 1000000000 bytes
+    /// 1 GB = 1000000000 bytes (10<sup>9</sup>)
     GB,
-    /// 1 GiB = 1073741824 bytes
+    /// 1 GiB = 1073741824 bytes (2<sup>30</sup>)
     GiB,
-    /// 1 TB = 1000000000000 bytes
+    /// 1 TB = 1000000000000 bytes (10<sup>12</sup>)
     TB,
-    /// 1 TiB = 1099511627776 bytes
+    /// 1 TiB = 1099511627776 bytes (2<sup>40</sup>)
     TiB,
-    /// 1 PB = 1000000000000000 bytes
+    /// 1 PB = 1000000000000000 bytes (10<sup>15</sup>)
     PB,
-    /// 1 PiB = 1125899906842624 bytes
+    /// 1 PiB = 1125899906842624 bytes (2<sup>50</sup>)
     PiB,
-}
-
-impl Display for ByteUnit {
-    #[inline]
-    fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-        f.write_str(self.as_ref())
-    }
-}
-
-impl AsRef<str> for ByteUnit {
-    #[inline]
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
-
-impl FromStr for ByteUnit {
-    type Err = ByteError;
-
-    #[inline]
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        ByteUnit::from_str(s)
-    }
+    #[cfg(feature = "u128")]
+    /// 1 EB = 1000000000000000000 bytes (10<sup>18</sup>)
+    EB,
+    #[cfg(feature = "u128")]
+    /// 1 EiB = 1152921504606846976 bytes (2<sup>60</sup>)
+    EiB,
+    #[cfg(feature = "u128")]
+    /// 1 ZB = 1000000000000000000000 bytes (10<sup>21</sup>)
+    ZB,
+    #[cfg(feature = "u128")]
+    /// 1 ZiB = 1180591620717411303424 bytes (2<sup>70</sup>)
+    ZiB,
 }
 
 impl ByteUnit {
@@ -76,117 +66,13 @@ impl ByteUnit {
     /// assert_eq!(ByteUnit::PB, ByteUnit::from_str("PB").unwrap());
     /// assert_eq!(ByteUnit::PiB, ByteUnit::from_str("PiB").unwrap());
     /// ```
-    #[allow(clippy::should_implement_trait, clippy::cognitive_complexity)]
+    #[allow(clippy::should_implement_trait)]
     pub fn from_str<S: AsRef<str>>(unit: S) -> Result<ByteUnit, ByteError> {
         let s = unit.as_ref().trim();
 
         let mut chars = s.chars();
 
-        match chars.next() {
-            Some(c) => {
-                match c.to_ascii_uppercase() {
-                    'B' => if chars.next().is_some() {
-                        Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
-                    } else {
-                        Ok(ByteUnit::B)
-                    }
-                    'K' => match chars.next() {
-                        Some(c) => match c.to_ascii_uppercase() {
-                            'I' => match chars.next() {
-                                Some(c) => match c.to_ascii_uppercase() {
-                                    'B' => Ok(ByteUnit::KiB),
-                                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
-                                }
-                                None => Ok(ByteUnit::KiB)
-                            }
-                            'B' => if chars.next().is_some() {
-                                Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
-                            } else {
-                                Ok(ByteUnit::KB)
-                            }
-                            _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
-                        }
-                        None => Ok(ByteUnit::KB)
-                    }
-                    'M' => match chars.next() {
-                        Some(c) => match c.to_ascii_uppercase() {
-                            'I' => match chars.next() {
-                                Some(c) => match c.to_ascii_uppercase() {
-                                    'B' => Ok(ByteUnit::MiB),
-                                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
-                                }
-                                None => Ok(ByteUnit::MiB)
-                            }
-                            'B' => if chars.next().is_some() {
-                                Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
-                            } else {
-                                Ok(ByteUnit::MB)
-                            },
-                            _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
-                        }
-                        None => Ok(ByteUnit::MB)
-                    },
-                    'G' => match chars.next() {
-                        Some(c) => match c.to_ascii_uppercase() {
-                            'I' => match chars.next() {
-                                Some(c) => match c.to_ascii_uppercase() {
-                                    'B' => Ok(ByteUnit::GiB),
-                                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
-                                }
-                                None => Ok(ByteUnit::GiB)
-                            }
-                            'B' => if chars.next().is_some() {
-                                Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
-                            } else {
-                                Ok(ByteUnit::GB)
-                            },
-                            _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
-                        }
-                        None => Ok(ByteUnit::GB)
-                    },
-                    'T' => match chars.next() {
-                        Some(c) => match c.to_ascii_uppercase() {
-                            'I' => match chars.next() {
-                                Some(c) => match c.to_ascii_uppercase() {
-                                    'B' => Ok(ByteUnit::TiB),
-                                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
-                                }
-                                None => {
-                                    Ok(ByteUnit::TiB)
-                                }
-                            }
-                            'B' => if chars.next().is_some() {
-                                Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
-                            } else {
-                                Ok(ByteUnit::TB)
-                            },
-                            _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
-                        }
-                        None => Ok(ByteUnit::TB)
-                    },
-                    'P' => match chars.next() {
-                        Some(c) => match c.to_ascii_uppercase() {
-                            'I' => match chars.next() {
-                                Some(c) => match c.to_ascii_uppercase() {
-                                    'B' => Ok(ByteUnit::PiB),
-                                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' is expected.", c)))
-                                }
-                                None => Ok(ByteUnit::PiB)
-                            }
-                            'B' => if chars.next().is_some() {
-                                Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. No character is expected.", c)))
-                            } else {
-                                Ok(ByteUnit::PB)
-                            },
-                            _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B' or an 'i' is expected.", c)))
-                        }
-                        None => Ok(ByteUnit::PB)
-                    },
-                    _ => Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B', a 'K', a 'M', a 'G', a 'T', a 'P' or no character is expected.", c)))
-                }
-            }
-            None => Ok(ByteUnit::B)
-        }
+        read_xib(chars.next(), chars)
     }
 
     /// Use string slice to represent this `ByteUnit`.
@@ -222,6 +108,220 @@ impl ByteUnit {
             ByteUnit::TiB => "TiB",
             ByteUnit::PB => "PB",
             ByteUnit::PiB => "PiB",
+            #[cfg(feature = "u128")]
+            ByteUnit::EB => "EB",
+            #[cfg(feature = "u128")]
+            ByteUnit::EiB => "EiB",
+            #[cfg(feature = "u128")]
+            ByteUnit::ZB => "ZB",
+            #[cfg(feature = "u128")]
+            ByteUnit::ZiB => "ZiB",
         }
+    }
+
+    /// Get bytes represented by this `ByteUnit`.
+    ///
+    /// ```
+    /// extern crate byte_unit;
+    ///
+    /// use byte_unit::ByteUnit;
+    ///
+    /// assert_eq!(1000000000000000000000, ByteUnit::ZB.get_unit_bytes());
+    /// assert_eq!(1152921504606846976, ByteUnit::EiB.get_unit_bytes());
+    /// ```
+    #[cfg(feature = "u128")]
+    #[inline]
+    pub fn get_unit_bytes(self) -> u128 {
+        match self {
+            ByteUnit::B => 1,
+            ByteUnit::KB => n_kb_bytes!(),
+            ByteUnit::KiB => n_kib_bytes!(),
+            ByteUnit::MB => n_mb_bytes!(),
+            ByteUnit::MiB => n_mib_bytes!(),
+            ByteUnit::GB => n_gb_bytes!(),
+            ByteUnit::GiB => n_gib_bytes!(),
+            ByteUnit::TB => n_tb_bytes!(),
+            ByteUnit::TiB => n_tib_bytes!(),
+            ByteUnit::PB => n_pb_bytes!(),
+            ByteUnit::PiB => n_pib_bytes!(),
+            ByteUnit::EB => n_eb_bytes!(),
+            ByteUnit::EiB => n_eib_bytes!(),
+            ByteUnit::ZB => n_zb_bytes!(),
+            ByteUnit::ZiB => n_zib_bytes!(),
+        }
+    }
+
+    /// Get bytes represented by this `ByteUnit`.
+    ///
+    /// ```
+    /// extern crate byte_unit;
+    ///
+    /// use byte_unit::ByteUnit;
+    ///
+    /// assert_eq!(1024, ByteUnit::KiB.get_unit_bytes());
+    /// assert_eq!(1000000000, ByteUnit::GB.get_unit_bytes());
+    /// ```
+    #[cfg(not(feature = "u128"))]
+    #[inline]
+    pub fn get_unit_bytes(self) -> u64 {
+        match self {
+            ByteUnit::B => 1,
+            ByteUnit::KB => n_kb_bytes!(),
+            ByteUnit::KiB => n_kib_bytes!(),
+            ByteUnit::MB => n_mb_bytes!(),
+            ByteUnit::MiB => n_mib_bytes!(),
+            ByteUnit::GB => n_gb_bytes!(),
+            ByteUnit::GiB => n_gib_bytes!(),
+            ByteUnit::TB => n_tb_bytes!(),
+            ByteUnit::TiB => n_tib_bytes!(),
+            ByteUnit::PB => n_pb_bytes!(),
+            ByteUnit::PiB => n_pib_bytes!(),
+        }
+    }
+}
+
+impl Display for ByteUnit {
+    #[inline]
+    fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
+        f.write_str(self.as_str())
+    }
+}
+
+impl AsRef<str> for ByteUnit {
+    #[inline]
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+impl FromStr for ByteUnit {
+    type Err = ByteError;
+
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        ByteUnit::from_str(s)
+    }
+}
+
+pub(crate) fn read_xib(c: Option<char>, mut chars: Chars) -> Result<ByteUnit, ByteError> {
+    match c {
+        Some(c) => {
+            match c.to_ascii_uppercase() {
+                'B' => {
+                    if chars.next().is_some() {
+                        Err(ByteError::UnitIncorrect(format!(
+                            "The character {:?} is incorrect. No character is expected.",
+                            c
+                        )))
+                    } else {
+                        Ok(ByteUnit::B)
+                    }
+                }
+                'K' => {
+                    if read_ib(chars)? {
+                        Ok(ByteUnit::KiB)
+                    } else {
+                        Ok(ByteUnit::KB)
+                    }
+                }
+                'M' => {
+                    if read_ib(chars)? {
+                        Ok(ByteUnit::MiB)
+                    } else {
+                        Ok(ByteUnit::MB)
+                    }
+                }
+                'G' => {
+                    if read_ib(chars)? {
+                        Ok(ByteUnit::GiB)
+                    } else {
+                        Ok(ByteUnit::GB)
+                    }
+                }
+                'T' => {
+                    if read_ib(chars)? {
+                        Ok(ByteUnit::TiB)
+                    } else {
+                        Ok(ByteUnit::TB)
+                    }
+                }
+                'P' => {
+                    if read_ib(chars)? {
+                        Ok(ByteUnit::PiB)
+                    } else {
+                        Ok(ByteUnit::PB)
+                    }
+                }
+                #[cfg(feature = "u128")]
+                'E' => {
+                    if read_ib(chars)? {
+                        Ok(ByteUnit::EiB)
+                    } else {
+                        Ok(ByteUnit::EB)
+                    }
+                }
+                #[cfg(feature = "u128")]
+                'Z' => {
+                    if read_ib(chars)? {
+                        Ok(ByteUnit::ZiB)
+                    } else {
+                        Ok(ByteUnit::ZB)
+                    }
+                }
+                _ => {
+                    #[cfg(feature = "u128")]
+                    {
+                        Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B', a 'K', a 'M', a 'G', a 'T', a 'P', a 'E' or no character is expected.", c)))
+                    }
+                    #[cfg(not(feature = "u128"))]
+                    {
+                        Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B', a 'K', a 'M', a 'G', a 'T', a 'P' or no character is expected.", c)))
+                    }
+                }
+            }
+        }
+        None => Ok(ByteUnit::B),
+    }
+}
+
+fn read_ib(mut chars: Chars) -> Result<bool, ByteError> {
+    match chars.next() {
+        Some(c) => {
+            match c.to_ascii_uppercase() {
+                'I' => {
+                    match chars.next() {
+                        Some(c) => {
+                            match c.to_ascii_uppercase() {
+                                'B' => Ok(true),
+                                _ => {
+                                    Err(ByteError::UnitIncorrect(format!(
+                                        "The character {:?} is incorrect. A 'B' is expected.",
+                                        c
+                                    )))
+                                }
+                            }
+                        }
+                        None => Ok(true),
+                    }
+                }
+                'B' => {
+                    if chars.next().is_some() {
+                        Err(ByteError::UnitIncorrect(format!(
+                            "The character {:?} is incorrect. No character is expected.",
+                            c
+                        )))
+                    } else {
+                        Ok(false)
+                    }
+                }
+                _ => {
+                    Err(ByteError::UnitIncorrect(format!(
+                        "The character {:?} is incorrect. A 'B' or an 'i' is expected.",
+                        c
+                    )))
+                }
+            }
+        }
+        None => Ok(false),
     }
 }

@@ -7,7 +7,7 @@
 ///
 /// let result = byte_unit::n_kb_bytes!(4);
 ///
-/// assert_eq!(result, 4000u128);
+/// assert_eq!(4000, result);
 /// ```
 ///
 /// ```
@@ -15,18 +15,18 @@
 ///
 /// let result = byte_unit::n_kb_bytes!(2.5, f64);
 ///
-/// assert_eq!(result, 2500u128);
+/// assert_eq!(2500, result);
 /// ```
 #[macro_export]
 macro_rules! n_kb_bytes {
     () => {
-        1000u128
+        $crate::KILOBYTE
     };
     ($x:expr) => {
-        $x as u128 * 1000u128
+        $crate::n_kb_bytes($x)
     };
     ($x:expr, $t:ty) => {
-        ($x * (1000000 as $t)) as u128 / 1000u128
+        $crate::_bytes_as!($x * ($crate::MEGABYTE as $t)) / $crate::KILOBYTE
     };
 }
 
@@ -39,7 +39,7 @@ macro_rules! n_kb_bytes {
 ///
 /// let result = byte_unit::n_kib_bytes!(4);
 ///
-/// assert_eq!(result, 4096u128);
+/// assert_eq!(4096, result);
 /// ```
 ///
 /// ```
@@ -47,18 +47,18 @@ macro_rules! n_kb_bytes {
 ///
 /// let result = byte_unit::n_kib_bytes!(2.5, f64);
 ///
-/// assert_eq!(result, 2560u128);
+/// assert_eq!(2560, result);
 /// ```
 #[macro_export]
 macro_rules! n_kib_bytes {
     () => {
-        1024u128
+        $crate::KIBIBYTE
     };
     ($x:expr) => {
-        $x as u128 * 1024u128
+        $crate::n_kib_bytes($x)
     };
     ($x:expr, $t:ty) => {
-        ($x * (1048576 as $t)) as u128 / 1024u128
+        $crate::_bytes_as!($x * ($crate::MEBIBYTE as $t)) / $crate::KIBIBYTE
     };
 }
 
@@ -71,7 +71,7 @@ macro_rules! n_kib_bytes {
 ///
 /// let result = byte_unit::n_mb_bytes!(4);
 ///
-/// assert_eq!(result, 4000000u128);
+/// assert_eq!(4000000, result);
 /// ```
 ///
 /// ```
@@ -79,18 +79,18 @@ macro_rules! n_kib_bytes {
 ///
 /// let result = byte_unit::n_mb_bytes!(2.5, f64);
 ///
-/// assert_eq!(result, 2500000u128);
+/// assert_eq!(2500000, result);
 /// ```
 #[macro_export]
 macro_rules! n_mb_bytes {
     () => {
-        1000000u128
+        $crate::MEGABYTE
     };
     ($x:expr) => {
-        $x as u128 * 1000000u128
+        $crate::n_mb_bytes($x)
     };
     ($x:expr, $t:ty) => {
-        ($x * (1000000 as $t)) as u128
+        $crate::_bytes_as!($x * ($crate::MEGABYTE as $t))
     };
 }
 
@@ -103,7 +103,7 @@ macro_rules! n_mb_bytes {
 ///
 /// let result = byte_unit::n_mib_bytes!(4);
 ///
-/// assert_eq!(result, 4194304u128);
+/// assert_eq!(4194304, result);
 /// ```
 ///
 /// ```
@@ -111,18 +111,18 @@ macro_rules! n_mb_bytes {
 ///
 /// let result = byte_unit::n_mib_bytes!(2.5, f64);
 ///
-/// assert_eq!(result, 2621440u128);
+/// assert_eq!(2621440, result);
 /// ```
 #[macro_export]
 macro_rules! n_mib_bytes {
     () => {
-        1048576u128
+        $crate::MEBIBYTE
     };
     ($x:expr) => {
-        $x as u128 * 1048576u128
+        $crate::n_mib_bytes($x)
     };
     ($x:expr, $t:ty) => {
-        ($x * (1048576 as $t)) as u128
+        $crate::_bytes_as!($x * ($crate::MEBIBYTE as $t))
     };
 }
 
@@ -135,7 +135,7 @@ macro_rules! n_mib_bytes {
 ///
 /// let result = byte_unit::n_gb_bytes!(4);
 ///
-/// assert_eq!(result, 4000000000u128);
+/// assert_eq!(4000000000, result);
 /// ```
 ///
 /// ```
@@ -143,18 +143,18 @@ macro_rules! n_mib_bytes {
 ///
 /// let result = byte_unit::n_gb_bytes!(2.5, f64);
 ///
-/// assert_eq!(result, 2500000000u128);
+/// assert_eq!(2500000000, result);
 /// ```
 #[macro_export]
 macro_rules! n_gb_bytes {
     () => {
-        1000000000u128
+        $crate::GIGABYTE
     };
     ($x:expr) => {
-        $x as u128 * 1000000000u128
+        $crate::n_gb_bytes($x)
     };
     ($x:expr, $t:ty) => {
-        ($x * (1000000 as $t)) as u128 * 1000u128
+        $crate::n_kb_bytes($crate::_bytes_as!($x * ($crate::MEGABYTE as $t)))
     };
 }
 
@@ -167,7 +167,7 @@ macro_rules! n_gb_bytes {
 ///
 /// let result = byte_unit::n_gib_bytes!(4);
 ///
-/// assert_eq!(result, 4294967296u128);
+/// assert_eq!(4294967296, result);
 /// ```
 ///
 /// ```
@@ -175,18 +175,18 @@ macro_rules! n_gb_bytes {
 ///
 /// let result = byte_unit::n_gib_bytes!(2.5, f64);
 ///
-/// assert_eq!(result, 2684354560u128);
+/// assert_eq!(2684354560, result);
 /// ```
 #[macro_export]
 macro_rules! n_gib_bytes {
     () => {
-        1073741824u128
+        $crate::GIBIBYTE
     };
     ($x:expr) => {
-        $x as u128 * 1073741824u128
+        $crate::n_gib_bytes($x)
     };
     ($x:expr, $t:ty) => {
-        ($x * (1048576 as $t)) as u128 * 1024u128
+        $crate::n_kib_bytes($crate::_bytes_as!($x * ($crate::MEBIBYTE as $t)))
     };
 }
 
@@ -199,7 +199,7 @@ macro_rules! n_gib_bytes {
 ///
 /// let result = byte_unit::n_tb_bytes!(4);
 ///
-/// assert_eq!(result, 4000000000000u128);
+/// assert_eq!(4000000000000, result);
 /// ```
 ///
 /// ```
@@ -207,18 +207,18 @@ macro_rules! n_gib_bytes {
 ///
 /// let result = byte_unit::n_tb_bytes!(2.5, f64);
 ///
-/// assert_eq!(result, 2500000000000u128);
+/// assert_eq!(2500000000000, result);
 /// ```
 #[macro_export]
 macro_rules! n_tb_bytes {
     () => {
-        1000000000000u128
+        $crate::TERABYTE
     };
     ($x:expr) => {
-        $x as u128 * 1000000000000u128
+        $crate::n_tb_bytes($x)
     };
     ($x:expr, $t:ty) => {
-        ($x * (1000000 as $t)) as u128 * 1000000u128
+        $crate::n_mb_bytes($crate::_bytes_as!($x * ($crate::MEGABYTE as $t)))
     };
 }
 
@@ -231,7 +231,7 @@ macro_rules! n_tb_bytes {
 ///
 /// let result = byte_unit::n_tib_bytes!(4);
 ///
-/// assert_eq!(result, 4398046511104u128);
+/// assert_eq!(4398046511104, result);
 /// ```
 ///
 /// ```
@@ -239,18 +239,18 @@ macro_rules! n_tb_bytes {
 ///
 /// let result = byte_unit::n_tib_bytes!(2.5, f64);
 ///
-/// assert_eq!(result, 2748779069440u128);
+/// assert_eq!(2748779069440, result);
 /// ```
 #[macro_export]
 macro_rules! n_tib_bytes {
     () => {
-        1099511627776u128
+        $crate::TEBIBYTE
     };
     ($x:expr) => {
-        $x as u128 * 1099511627776u128
+        $crate::n_tib_bytes($x)
     };
     ($x:expr, $t:ty) => {
-        ($x * (1048576 as $t)) as u128 * 1048576u128
+        $crate::n_mib_bytes($crate::_bytes_as!($x * ($crate::MEBIBYTE as $t)))
     };
 }
 
@@ -263,7 +263,7 @@ macro_rules! n_tib_bytes {
 ///
 /// let result = byte_unit::n_pb_bytes!(4);
 ///
-/// assert_eq!(result, 4000000000000000u128);
+/// assert_eq!(4000000000000000, result);
 /// ```
 ///
 /// ```
@@ -271,18 +271,18 @@ macro_rules! n_tib_bytes {
 ///
 /// let result = byte_unit::n_pb_bytes!(2.5, f64);
 ///
-/// assert_eq!(result, 2500000000000000u128);
+/// assert_eq!(2500000000000000, result);
 /// ```
 #[macro_export]
 macro_rules! n_pb_bytes {
     () => {
-        1000000000000000u128
+        $crate::PETABYTE
     };
     ($x:expr) => {
-        $x as u128 * 1000000000000000u128
+        $crate::n_pb_bytes($x)
     };
     ($x:expr, $t:ty) => {
-        ($x * (1000000 as $t)) as u128 * 1000000000u128
+        $crate::n_gb_bytes($crate::_bytes_as!($x * ($crate::MEGABYTE as $t)))
     };
 }
 
@@ -295,7 +295,7 @@ macro_rules! n_pb_bytes {
 ///
 /// let result = byte_unit::n_pib_bytes!(4);
 ///
-/// assert_eq!(result, 4503599627370496u128);
+/// assert_eq!(4503599627370496, result);
 /// ```
 ///
 /// ```
@@ -303,17 +303,149 @@ macro_rules! n_pb_bytes {
 ///
 /// let result = byte_unit::n_pib_bytes!(2.5, f64);
 ///
-/// assert_eq!(result, 2814749767106560u128);
+/// assert_eq!(2814749767106560, result);
 /// ```
 #[macro_export]
 macro_rules! n_pib_bytes {
     () => {
-        1125899906842624u128
+        $crate::PEBIBYTE
     };
     ($x:expr) => {
-        $x as u128 * 1125899906842624u128
+        $crate::n_pib_bytes($x)
     };
     ($x:expr, $t:ty) => {
-        ($x * (1048576 as $t)) as u128 * 1073741824u128
+        $crate::n_gib_bytes($crate::_bytes_as!($x * ($crate::MEBIBYTE as $t)))
+    };
+}
+
+/// Convert n EB to bytes.
+///
+/// ## Examples
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_eb_bytes!(4);
+///
+/// assert_eq!(4000000000000000000, result);
+/// ```
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_eb_bytes!(2.5, f64);
+///
+/// assert_eq!(2500000000000000000, result);
+/// ```
+#[cfg(feature = "u128")]
+#[macro_export]
+macro_rules! n_eb_bytes {
+    () => {
+        $crate::EXABYTE
+    };
+    ($x:expr) => {
+        $crate::n_eb_bytes($x)
+    };
+    ($x:expr, $t:ty) => {
+        $crate::n_tb_bytes($crate::_bytes_as!($x * ($crate::MEGABYTE as $t)))
+    };
+}
+
+/// Convert n EiB to bytes.
+///
+/// ## Examples
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_eib_bytes!(4);
+///
+/// assert_eq!(4611686018427387904, result);
+/// ```
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_eib_bytes!(2.5, f64);
+///
+/// assert_eq!(2882303761517117440, result);
+/// ```
+#[cfg(feature = "u128")]
+#[macro_export]
+macro_rules! n_eib_bytes {
+    () => {
+        $crate::EXBIBYTE
+    };
+    ($x:expr) => {
+        $crate::n_eib_bytes($x)
+    };
+    ($x:expr, $t:ty) => {
+        $crate::n_tib_bytes($crate::_bytes_as!($x * ($crate::MEBIBYTE as $t)))
+    };
+}
+
+/// Convert n ZB to bytes.
+///
+/// ## Examples
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_zb_bytes!(4);
+///
+/// assert_eq!(4000000000000000000000, result);
+/// ```
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_zb_bytes!(2.5, f64);
+///
+/// assert_eq!(2500000000000000000000, result);
+/// ```
+#[cfg(feature = "u128")]
+#[macro_export]
+macro_rules! n_zb_bytes {
+    () => {
+        $crate::ZETTABYTE
+    };
+    ($x:expr) => {
+        $crate::n_zb_bytes($x)
+    };
+    ($x:expr, $t:ty) => {
+        $crate::n_pb_bytes($crate::_bytes_as!($x * ($crate::MEGABYTE as $t)))
+    };
+}
+
+/// Convert n ZiB to bytes.
+///
+/// ## Examples
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_zib_bytes!(4);
+///
+/// assert_eq!(4722366482869645213696, result);
+/// ```
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_zib_bytes!(2.5, f64);
+///
+/// assert_eq!(2951479051793528258560, result);
+/// ```
+#[cfg(feature = "u128")]
+#[macro_export]
+macro_rules! n_zib_bytes {
+    () => {
+        $crate::ZEBIBYTE
+    };
+    ($x:expr) => {
+        $crate::n_zib_bytes($x)
+    };
+    ($x:expr, $t:ty) => {
+        $crate::n_pib_bytes($crate::_bytes_as!($x * ($crate::MEBIBYTE as $t)))
     };
 }
