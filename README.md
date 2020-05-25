@@ -111,7 +111,7 @@ let adjusted_byte = byte.get_appropriate_unit(true);
 assert_eq!("1.43 MiB", adjusted_byte.to_string());
 ```
 
-The number of fractional digits created by the `to_string` method of a `AdjustedByte` instance is always `2`.
+The number of fractional digits created by the `to_string` method of a `AdjustedByte` instance is `2` unless the `ByteUnit` is `B`.
 
 To change the number of fractional digits in the formatted string, you can use the `format` method instead.
 

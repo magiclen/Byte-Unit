@@ -28,9 +28,25 @@ impl AdjustedByte {
     ///
     /// assert_eq!("1.555 MB", result);
     /// ```
+    ///
+    /// ```
+    /// extern crate byte_unit;
+    ///
+    /// use byte_unit::{Byte, ByteUnit};
+    ///
+    /// let byte = Byte::from_unit(1555.2f64, ByteUnit::B).unwrap();
+    ///
+    /// let result = byte.get_adjusted_unit(ByteUnit::B).format(3);
+    ///
+    /// assert_eq!("1555 B", result);
+    /// ```
     #[inline]
     pub fn format(&self, fractional_digits: usize) -> String {
-        format!("{:.*} {}", fractional_digits, self.value, self.unit)
+        if self.unit == ByteUnit::B {
+            format!("{:.0} B", self.value)
+        } else {
+            format!("{:.*} {}", fractional_digits, self.value, self.unit)
+        }
     }
 
     #[inline]
