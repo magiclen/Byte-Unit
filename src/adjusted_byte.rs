@@ -89,8 +89,13 @@ impl AdjustedByte {
 impl Display for AdjustedByte {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-        f.write_fmt(format_args!("{:.2} ", self.value))?;
-        Display::fmt(&self.unit, f)
+        if self.unit == ByteUnit::B {
+            f.write_fmt(format_args!("{:.0} B", self.value))
+        } else {
+            f.write_fmt(format_args!("{:.2} ", self.value))?;
+
+            Display::fmt(&self.unit, f)
+        }
     }
 }
 
