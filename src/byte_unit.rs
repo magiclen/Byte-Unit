@@ -2,7 +2,7 @@ use core::str::{Chars, FromStr};
 
 use alloc::fmt::{self, Display, Formatter};
 
-use crate::ByteError;
+use crate::UnitIncorrectError;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 /// The unit of bytes.
@@ -67,7 +67,7 @@ impl ByteUnit {
     /// assert_eq!(ByteUnit::PiB, ByteUnit::from_str("PiB").unwrap());
     /// ```
     #[allow(clippy::should_implement_trait)]
-    pub fn from_str<S: AsRef<str>>(unit: S) -> Result<ByteUnit, ByteError> {
+    pub fn from_str<S: AsRef<str>>(unit: S) -> Result<ByteUnit, UnitIncorrectError> {
         let s = unit.as_ref().trim();
 
         let mut chars = s.chars();
@@ -195,7 +195,7 @@ impl AsRef<str> for ByteUnit {
 }
 
 impl FromStr for ByteUnit {
-    type Err = ByteError;
+    type Err = UnitIncorrectError;
 
     #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -203,16 +203,17 @@ impl FromStr for ByteUnit {
     }
 }
 
-pub(crate) fn read_xib(c: Option<char>, mut chars: Chars) -> Result<ByteUnit, ByteError> {
+pub(crate) fn read_xib(c: Option<char>, mut chars: Chars) -> Result<ByteUnit, UnitIncorrectError> {
     match c {
         Some(c) => {
             match c.to_ascii_uppercase() {
                 'B' => {
                     if chars.next().is_some() {
-                        Err(ByteError::UnitIncorrect(format!(
-                            "The character {:?} is incorrect. No character is expected.",
-                            c
-                        )))
+                        Err(UnitIncorrectError {
+                            character: c,
+                            expected_characters: &[],
+                            also_expect_no_character: false,
+                        })
                     } else {
                         Ok(ByteUnit::B)
                     }
@@ -271,11 +272,19 @@ pub(crate) fn read_xib(c: Option<char>, mut chars: Chars) -> Result<ByteUnit, By
                 _ => {
                     #[cfg(feature = "u128")]
                     {
-                        Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B', a 'K', a 'M', a 'G', a 'T', a 'P', a 'E' or no character is expected.", c)))
+                        Err(UnitIncorrectError {
+                            character: c,
+                            expected_characters: &['B', 'K', 'M', 'G', 'T', 'P', 'E'],
+                            also_expect_no_character: true,
+                        })
                     }
                     #[cfg(not(feature = "u128"))]
                     {
-                        Err(ByteError::UnitIncorrect(format!("The character {:?} is incorrect. A 'B', a 'K', a 'M', a 'G', a 'T', a 'P' or no character is expected.", c)))
+                        Err(UnitIncorrectError {
+                            character: c,
+                            expected_characters: &['B', 'K', 'M', 'G', 'T', 'P'],
+                            also_expect_no_character: true,
+                        })
                     }
                 }
             }
@@ -284,7 +293,7 @@ pub(crate) fn read_xib(c: Option<char>, mut chars: Chars) -> Result<ByteUnit, By
     }
 }
 
-fn read_ib(mut chars: Chars) -> Result<bool, ByteError> {
+fn read_ib(mut chars: Chars) -> Result<bool, UnitIncorrectError> {
     match chars.next() {
         Some(c) => {
             match c.to_ascii_uppercase() {
@@ -294,10 +303,11 @@ fn read_ib(mut chars: Chars) -> Result<bool, ByteError> {
                             match c.to_ascii_uppercase() {
                                 'B' => Ok(true),
                                 _ => {
-                                    Err(ByteError::UnitIncorrect(format!(
-                                        "The character {:?} is incorrect. A 'B' is expected.",
-                                        c
-                                    )))
+                                    Err(UnitIncorrectError {
+                                        character: c,
+                                        expected_characters: &['B'],
+                                        also_expect_no_character: false,
+                                    })
                                 }
                             }
                         }
@@ -306,19 +316,21 @@ fn read_ib(mut chars: Chars) -> Result<bool, ByteError> {
                 }
                 'B' => {
                     if chars.next().is_some() {
-                        Err(ByteError::UnitIncorrect(format!(
-                            "The character {:?} is incorrect. No character is expected.",
-                            c
-                        )))
+                        Err(UnitIncorrectError {
+                            character: c,
+                            expected_characters: &[],
+                            also_expect_no_character: false,
+                        })
                     } else {
                         Ok(false)
                     }
                 }
                 _ => {
-                    Err(ByteError::UnitIncorrect(format!(
-                        "The character {:?} is incorrect. A 'B' or an 'i' is expected.",
-                        c
-                    )))
+                    Err(UnitIncorrectError {
+                        character: c,
+                        expected_characters: &['B', 'i'],
+                        also_expect_no_character: false,
+                    })
                 }
             }
         }

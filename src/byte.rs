@@ -1,9 +1,8 @@
 use core::str::FromStr;
 
 use alloc::fmt::{self, Display, Formatter};
-use alloc::string::String;
 
-use crate::{read_xib, AdjustedByte, ByteError, ByteUnit};
+use crate::{read_xib, AdjustedByte, ByteError, ByteUnit, ValueIncorrectError};
 
 #[cfg(feature = "u128")]
 #[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash)]
@@ -32,10 +31,7 @@ impl Byte {
     #[inline]
     pub fn from_unit(value: f64, unit: ByteUnit) -> Result<Byte, ByteError> {
         if value < 0f64 {
-            return Err(ByteError::ValueIncorrect(format!(
-                "The value `{}` for creating a `Byte` instance is negative.",
-                value
-            )));
+            return Err(ValueIncorrectError::Negative(value).into());
         }
 
         let bytes = get_bytes(value, unit);
@@ -176,14 +172,11 @@ impl Byte {
                 match c {
                     '0'..='9' => f64::from(c as u8 - b'0'),
                     _ => {
-                        return Err(ByteError::ValueIncorrect(format!(
-                            "The character {:?} is not a number.",
-                            c
-                        )));
+                        return Err(ValueIncorrectError::NotNumber(c).into());
                     }
                 }
             }
-            None => return Err(ByteError::ValueIncorrect(String::from("No value."))),
+            None => return Err(ValueIncorrectError::NoValue.into()),
         };
 
         let c = 'outer: loop {
@@ -205,10 +198,9 @@ impl Byte {
                                             i /= 10.0;
                                         } else {
                                             if (i * 10.0) as u8 == 1 {
-                                                return Err(ByteError::ValueIncorrect(format!(
-                                                    "The character {:?} is not a number.",
-                                                    c
-                                                )));
+                                                return Err(
+                                                    ValueIncorrectError::NotNumber(c).into()
+                                                );
                                             }
 
                                             match c {
@@ -231,10 +223,7 @@ impl Byte {
                                     }
                                     None => {
                                         if (i * 10.0) as u8 == 1 {
-                                            return Err(ByteError::ValueIncorrect(format!(
-                                                "The character {:?} is not a number.",
-                                                c
-                                            )));
+                                            return Err(ValueIncorrectError::NotNumber(c).into());
                                         }
 
                                         break 'outer None;

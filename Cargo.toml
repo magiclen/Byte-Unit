@@ -17,6 +17,6 @@ repository = "magiclen/Byte-Unit"
 branch = "master"
 
 [features]
+default  = ["std", "u128"]
 std = []
 u128 = []
-default  = ["u128"]
