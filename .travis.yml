@@ -12,8 +12,9 @@ os:
 
 env:
   -
+  - FEATURES="serde"
   - NO_DEFAULT_FEATURES=1
-  - FEATURES="std"
+  - NO_DEFAULT_FEATURES=1 FEATURES="serde"
 
 script:
   - if [ "$NO_DEFAULT_FEATURES" = "1" ]; then NO_DEFAULT_FEATURES="--no-default-features"; else NO_DEFAULT_FEATURES=""; fi

@@ -5,6 +5,12 @@ use alloc::string::String;
 
 use crate::{get_bytes, Byte, ByteUnit};
 
+#[cfg(feature = "serde")]
+use crate::serde::ser::{Serialize, Serializer};
+
+#[cfg(feature = "serde")]
+use crate::serde::de::{Deserialize, Deserializer, Error as DeError, Unexpected, Visitor};
+
 #[derive(Debug, Clone, Copy)]
 /// Generated from the `get_appropriate_unit` and `get_adjusted_unit` methods of a `Byte` object.
 pub struct AdjustedByte {
@@ -178,5 +184,151 @@ impl Ord for AdjustedByte {
         let o = other.get_byte();
 
         s.cmp(&o)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl Serialize for AdjustedByte {
+    #[inline]
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer, {
+        serializer.serialize_str(self.format(2).as_str())
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> Deserialize<'de> for AdjustedByte {
+    #[inline]
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>, {
+        struct AdjustedByteVisitor;
+
+        impl<'de> Visitor<'de> for AdjustedByteVisitor {
+            type Value = AdjustedByte;
+
+            serde_if_integer128! {
+                #[inline]
+                fn visit_i128<E>(self, v: i128) -> Result<Self::Value, E>
+                    where
+                        E: DeError,
+                {
+                    if v < 0 {
+                        Err(DeError::invalid_value(Unexpected::Other(format!("integer `{}`", v).as_str()), &self))
+                    } else {
+                        #[cfg(feature = "u128")]
+                            {
+                                Ok(Byte::from_bytes(v as u128).get_appropriate_unit(false))
+                            }
+
+                        #[cfg(not(feature = "u128"))]
+                            {
+                                if v > u64::max_value() as i128 {
+                                    Err(DeError::invalid_value(Unexpected::Other(format!("integer `{}`", v).as_str()), &self))
+                                } else {
+                                    Ok(Byte::from_bytes(v as u64).get_appropriate_unit(false))
+                                }
+                            }
+                    }
+                }
+
+                #[inline]
+                fn visit_u128<E>(self, v: u128) -> Result<Self::Value, E>
+                    where
+                        E: DeError,
+                {
+                    #[cfg(feature = "u128")]
+                        {
+                            Ok(Byte::from_bytes(v).get_appropriate_unit(false))
+                        }
+
+                    #[cfg(not(feature = "u128"))]
+                        {
+                            if v > u64::max_value() as u128 {
+                                Err(DeError::invalid_value(Unexpected::Other(format!("integer `{}`", v).as_str()), &self))
+                            } else {
+                                Ok(Byte::from_bytes(v as u64).get_appropriate_unit(false))
+                            }
+                        }
+                }
+            }
+
+            #[inline]
+            fn expecting(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
+                f.write_str("expecting a byte such as 123, \"123\", \"123KiB\" or \"50.84 MB\"")
+            }
+
+            #[inline]
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+            where
+                E: DeError, {
+                Byte::from_str(v).map(|b| b.get_appropriate_unit(false)).map_err(DeError::custom)
+            }
+
+            #[inline]
+            fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+            where
+                E: DeError, {
+                Byte::from_str(v.as_str())
+                    .map(|b| b.get_appropriate_unit(false))
+                    .map_err(DeError::custom)
+            }
+
+            #[inline]
+            fn visit_i64<E>(self, v: i64) -> Result<Self::Value, E>
+            where
+                E: DeError, {
+                if v < 0 {
+                    Err(DeError::invalid_value(Unexpected::Signed(v), &self))
+                } else {
+                    #[cfg(feature = "u128")]
+                    {
+                        Ok(Byte::from_bytes(v as u128).get_appropriate_unit(false))
+                    }
+
+                    #[cfg(not(feature = "u128"))]
+                    {
+                        Ok(Byte::from_bytes(v as u64).get_appropriate_unit(false))
+                    }
+                }
+            }
+
+            #[inline]
+            fn visit_u64<E>(self, v: u64) -> Result<Self::Value, E>
+            where
+                E: DeError, {
+                #[cfg(feature = "u128")]
+                {
+                    Ok(Byte::from_bytes(v as u128).get_appropriate_unit(false))
+                }
+
+                #[cfg(not(feature = "u128"))]
+                {
+                    Ok(Byte::from_bytes(v).get_appropriate_unit(false))
+                }
+            }
+
+            #[inline]
+            fn visit_f64<E>(self, v: f64) -> Result<Self::Value, E>
+            where
+                E: DeError, {
+                if v.fract() > 1e-10 {
+                    Err(DeError::invalid_value(Unexpected::Float(v), &self))
+                } else {
+                    #[cfg(feature = "u128")]
+                    {
+                        Ok(Byte::from_bytes(v as u128).get_appropriate_unit(false))
+                    }
+
+                    #[cfg(not(feature = "u128"))]
+                    {
+                        Ok(Byte::from_bytes(v as u64).get_appropriate_unit(false))
+                    }
+                }
+            }
+        }
+
+        deserializer.deserialize_any(AdjustedByteVisitor)
     }
 }

@@ -1,8 +1,17 @@
 use core::str::{Chars, FromStr};
 
+#[cfg(feature = "serde")]
+use alloc::string::String;
+
 use alloc::fmt::{self, Display, Formatter};
 
 use crate::UnitIncorrectError;
+
+#[cfg(feature = "serde")]
+use crate::serde::ser::{Serialize, Serializer};
+
+#[cfg(feature = "serde")]
+use crate::serde::de::{Deserialize, Deserializer, Error as DeError, Visitor};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 /// The unit of bytes.
@@ -335,5 +344,50 @@ fn read_ib(mut chars: Chars) -> Result<bool, UnitIncorrectError> {
             }
         }
         None => Ok(false),
+    }
+}
+
+#[cfg(feature = "serde")]
+impl Serialize for ByteUnit {
+    #[inline]
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer, {
+        serializer.serialize_str(self.as_str())
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> Deserialize<'de> for ByteUnit {
+    #[inline]
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>, {
+        struct ByteUnitVisitor;
+
+        impl<'de> Visitor<'de> for ByteUnitVisitor {
+            type Value = ByteUnit;
+
+            #[inline]
+            fn expecting(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
+                f.write_str("expecting a byte unit such as \"B\", \"KB\" or \"MiB\"")
+            }
+
+            #[inline]
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+            where
+                E: DeError, {
+                ByteUnit::from_str(v).map_err(DeError::custom)
+            }
+
+            #[inline]
+            fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+            where
+                E: DeError, {
+                ByteUnit::from_str(v.as_str()).map_err(DeError::custom)
+            }
+        }
+
+        deserializer.deserialize_any(ByteUnitVisitor)
     }
 }
