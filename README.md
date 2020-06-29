@@ -127,6 +127,27 @@ let adjusted_byte = byte.get_appropriate_unit(false);
 assert_eq!("1.5 MB", adjusted_byte.format(1));
 ```
 
+## No Std
+
+Disable the default features to compile this crate without std.
+
+```toml
+[dependencies.byte-unit]
+version = "*"
+default-features = false
+features = ["u128"]
+```
+
+## Serde Support
+
+Enable the `serde` feature to support the serde framework.
+
+```toml
+[dependencies.byte-unit]
+version = "*"
+features = ["serde"]
+```
+
 ## Crates.io
 
 https://crates.io/crates/byte-unit
