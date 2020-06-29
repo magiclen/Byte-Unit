@@ -217,14 +217,15 @@ pub(crate) fn read_xib(c: Option<char>, mut chars: Chars) -> Result<ByteUnit, Un
         Some(c) => {
             match c.to_ascii_uppercase() {
                 'B' => {
-                    if chars.next().is_some() {
-                        Err(UnitIncorrectError {
-                            character: c,
-                            expected_characters: &[],
-                            also_expect_no_character: false,
-                        })
-                    } else {
-                        Ok(ByteUnit::B)
+                    match chars.next() {
+                        Some(c) => {
+                            Err(UnitIncorrectError {
+                                character: c,
+                                expected_characters: &[],
+                                also_expect_no_character: false,
+                            })
+                        }
+                        None => Ok(ByteUnit::B),
                     }
                 }
                 'K' => {
@@ -324,14 +325,15 @@ fn read_ib(mut chars: Chars) -> Result<bool, UnitIncorrectError> {
                     }
                 }
                 'B' => {
-                    if chars.next().is_some() {
-                        Err(UnitIncorrectError {
-                            character: c,
-                            expected_characters: &[],
-                            also_expect_no_character: false,
-                        })
-                    } else {
-                        Ok(false)
+                    match chars.next() {
+                        Some(c) => {
+                            Err(UnitIncorrectError {
+                                character: c,
+                                expected_characters: &[],
+                                also_expect_no_character: false,
+                            })
+                        }
+                        None => Ok(false),
                     }
                 }
                 _ => {
