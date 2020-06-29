@@ -256,7 +256,7 @@ impl<'de> Deserialize<'de> for AdjustedByte {
 
             #[inline]
             fn expecting(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-                f.write_str("expecting a byte such as 123, \"123\", \"123KiB\" or \"50.84 MB\"")
+                f.write_str("a byte such as 123, \"123\", \"123KiB\" or \"50.84 MB\"")
             }
 
             #[inline]
@@ -313,19 +313,9 @@ impl<'de> Deserialize<'de> for AdjustedByte {
             fn visit_f64<E>(self, v: f64) -> Result<Self::Value, E>
             where
                 E: DeError, {
-                if v.fract() > 1e-10 {
-                    Err(DeError::invalid_value(Unexpected::Float(v), &self))
-                } else {
-                    #[cfg(feature = "u128")]
-                    {
-                        Ok(Byte::from_bytes(v as u128).get_appropriate_unit(false))
-                    }
-
-                    #[cfg(not(feature = "u128"))]
-                    {
-                        Ok(Byte::from_bytes(v as u64).get_appropriate_unit(false))
-                    }
-                }
+                Byte::from_unit(v, ByteUnit::B)
+                    .map(|b| b.get_appropriate_unit(false))
+                    .map_err(DeError::custom)
             }
         }
 

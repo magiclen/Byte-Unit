@@ -372,7 +372,7 @@ impl<'de> Deserialize<'de> for ByteUnit {
 
             #[inline]
             fn expecting(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-                f.write_str("expecting a byte unit such as \"B\", \"KB\" or \"MiB\"")
+                f.write_str("a byte unit such as \"B\", \"KB\" or \"MiB\"")
             }
 
             #[inline]
