@@ -284,7 +284,7 @@ pub(crate) fn read_xib(c: Option<char>, mut chars: Chars) -> Result<ByteUnit, Un
                     {
                         Err(UnitIncorrectError {
                             character: c,
-                            expected_characters: &['B', 'K', 'M', 'G', 'T', 'P', 'E'],
+                            expected_characters: &['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z'],
                             also_expect_no_character: true,
                         })
                     }
