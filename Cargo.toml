@@ -1,12 +1,12 @@
 [package]
 name = "byte-unit"
-version = "4.0.0"
+version = "4.0.1"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2018"
 repository = "https://github.com/magiclen/byte-unit"
 homepage = "https://magiclen.org/byte-unit"
 keywords = ["byte", "unit", "kb", "mb", "gb"]
-categories = ["no-std", "parser-implementations"]
+categories = ["no-std", "parser-implementations", "value-formatting"]
 description= "A library for interaction with units of bytes."
 readme = "README.md"
 license = "MIT"
