@@ -1,3 +1,4 @@
+use core::convert::TryFrom;
 use core::str::{Chars, FromStr};
 
 #[cfg(feature = "serde")]
@@ -200,6 +201,15 @@ impl AsRef<str> for ByteUnit {
     #[inline]
     fn as_ref(&self) -> &str {
         self.as_str()
+    }
+}
+
+impl TryFrom<&str> for ByteUnit {
+    type Error = UnitIncorrectError;
+
+    #[inline]
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
+        ByteUnit::from_str(s)
     }
 }
 

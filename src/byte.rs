@@ -1,3 +1,4 @@
+use core::convert::TryFrom;
 use core::str::FromStr;
 
 #[cfg(feature = "serde")]
@@ -475,6 +476,15 @@ impl Into<u64> for Byte {
     #[inline]
     fn into(self) -> u64 {
         self.0
+    }
+}
+
+impl TryFrom<&str> for Byte {
+    type Error = ByteError;
+
+    #[inline]
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
+        Byte::from_str(s)
     }
 }
 

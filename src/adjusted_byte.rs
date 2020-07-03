@@ -187,6 +187,13 @@ impl Ord for AdjustedByte {
     }
 }
 
+impl Into<Byte> for AdjustedByte {
+    #[inline]
+    fn into(self) -> Byte {
+        self.get_byte()
+    }
+}
+
 #[cfg(feature = "serde")]
 impl Serialize for AdjustedByte {
     #[inline]
