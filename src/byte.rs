@@ -479,6 +479,94 @@ impl Into<u64> for Byte {
     }
 }
 
+#[cfg(feature = "u128")]
+impl From<u128> for Byte {
+    #[inline]
+    fn from(u: u128) -> Self {
+        Byte::from_bytes(u)
+    }
+}
+
+#[cfg(feature = "u128")]
+impl From<usize> for Byte {
+    #[inline]
+    fn from(u: usize) -> Self {
+        Byte::from_bytes(u as u128)
+    }
+}
+
+#[cfg(not(feature = "u128"))]
+impl From<usize> for Byte {
+    #[inline]
+    fn from(u: usize) -> Self {
+        Byte::from_bytes(u as u64)
+    }
+}
+
+#[cfg(feature = "u128")]
+impl From<u64> for Byte {
+    #[inline]
+    fn from(u: u64) -> Self {
+        Byte::from_bytes(u as u128)
+    }
+}
+
+#[cfg(not(feature = "u128"))]
+impl From<u64> for Byte {
+    #[inline]
+    fn from(u: u64) -> Self {
+        Byte::from_bytes(u)
+    }
+}
+
+#[cfg(feature = "u128")]
+impl From<u32> for Byte {
+    #[inline]
+    fn from(u: u32) -> Self {
+        Byte::from_bytes(u as u128)
+    }
+}
+
+#[cfg(not(feature = "u128"))]
+impl From<u32> for Byte {
+    #[inline]
+    fn from(u: u32) -> Self {
+        Byte::from_bytes(u as u64)
+    }
+}
+
+#[cfg(feature = "u128")]
+impl From<u16> for Byte {
+    #[inline]
+    fn from(u: u16) -> Self {
+        Byte::from_bytes(u as u128)
+    }
+}
+
+#[cfg(not(feature = "u128"))]
+impl From<u16> for Byte {
+    #[inline]
+    fn from(u: u16) -> Self {
+        Byte::from_bytes(u as u64)
+    }
+}
+
+#[cfg(feature = "u128")]
+impl From<u8> for Byte {
+    #[inline]
+    fn from(u: u8) -> Self {
+        Byte::from_bytes(u as u128)
+    }
+}
+
+#[cfg(not(feature = "u128"))]
+impl From<u8> for Byte {
+    #[inline]
+    fn from(u: u8) -> Self {
+        Byte::from_bytes(u as u64)
+    }
+}
+
 impl TryFrom<&str> for Byte {
     type Error = ByteError;
 
