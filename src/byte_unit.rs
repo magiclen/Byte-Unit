@@ -224,6 +224,7 @@ impl FromStr for ByteUnit {
     }
 }
 
+#[inline]
 pub(crate) fn get_char_from_bytes(e: u8, mut bytes: Bytes) -> char {
     let width = unsafe { utf8_width::get_width_assume_valid(e) };
 

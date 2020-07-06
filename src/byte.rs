@@ -182,7 +182,7 @@ impl Byte {
         let mut value = match bytes.next() {
             Some(e) => {
                 match e {
-                    b'0'..=b'9' => f64::from(e as u8 - b'0'),
+                    b'0'..=b'9' => f64::from(e - b'0'),
                     _ => {
                         return Err(
                             ValueIncorrectError::NotNumber(get_char_from_bytes(e, bytes)).into()
