@@ -1,31 +1,31 @@
 /// KB
-pub const KILOBYTE: u128 = 1000;
+pub const KILOBYTE: u128 = 1_000;
 /// KiB
-pub const KIBIBYTE: u128 = 1024;
+pub const KIBIBYTE: u128 = 1 << 10;
 /// MB
-pub const MEGABYTE: u128 = 1000000;
+pub const MEGABYTE: u128 = 1_000_000;
 /// MiB
-pub const MEBIBYTE: u128 = 1048576;
+pub const MEBIBYTE: u128 = 1 << 20;
 /// GB
-pub const GIGABYTE: u128 = 1000000000;
+pub const GIGABYTE: u128 = 1_000_000_000;
 /// GiB
-pub const GIBIBYTE: u128 = 1073741824;
+pub const GIBIBYTE: u128 = 1 << 30;
 /// TB
-pub const TERABYTE: u128 = 1000000000000;
+pub const TERABYTE: u128 = 1_000_000_000_000;
 /// TiB
-pub const TEBIBYTE: u128 = 1099511627776;
+pub const TEBIBYTE: u128 = 1 << 40;
 /// PB
-pub const PETABYTE: u128 = 1000000000000000;
+pub const PETABYTE: u128 = 1_000_000_000_000_000;
 /// PiB
-pub const PEBIBYTE: u128 = 1125899906842624;
+pub const PEBIBYTE: u128 = 1 << 50;
 /// EB
-pub const EXABYTE: u128 = 1000000000000000000;
+pub const EXABYTE: u128 = 1_000_000_000_000_000_000;
 /// EiB
-pub const EXBIBYTE: u128 = 1152921504606846976;
+pub const EXBIBYTE: u128 = 1 << 60;
 /// ZB
-pub const ZETTABYTE: u128 = 1000000000000000000000;
+pub const ZETTABYTE: u128 = 1_000_000_000_000_000_000_000;
 /// ZiB
-pub const ZEBIBYTE: u128 = 1180591620717411303424;
+pub const ZEBIBYTE: u128 = 1 << 70;
 
 /// Convert n KB to bytes.
 #[inline]

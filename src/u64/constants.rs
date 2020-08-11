@@ -1,23 +1,23 @@
 /// KB
-pub const KILOBYTE: u64 = 1000;
+pub const KILOBYTE: u64 = 1_000;
 /// KiB
-pub const KIBIBYTE: u64 = 1024;
+pub const KIBIBYTE: u64 = 1 << 10;
 /// MB
-pub const MEGABYTE: u64 = 1000000;
+pub const MEGABYTE: u64 = 1_000_000;
 /// MiB
-pub const MEBIBYTE: u64 = 1048576;
+pub const MEBIBYTE: u64 = 1 << 20;
 /// GB
-pub const GIGABYTE: u64 = 1000000000;
+pub const GIGABYTE: u64 = 1_000_000_000;
 /// GiB
-pub const GIBIBYTE: u64 = 1073741824;
+pub const GIBIBYTE: u64 = 1 << 30;
 /// TB
-pub const TERABYTE: u64 = 1000000000000;
+pub const TERABYTE: u64 = 1_000_000_000_000;
 /// TiB
-pub const TEBIBYTE: u64 = 1099511627776;
+pub const TEBIBYTE: u64 = 1 << 40;
 /// PB
-pub const PETABYTE: u64 = 1000000000000000;
+pub const PETABYTE: u64 = 1_000_000_000_000_000;
 /// PiB
-pub const PEBIBYTE: u64 = 1125899906842624;
+pub const PEBIBYTE: u64 = 1 << 50;
 
 /// Convert n KB to bytes.
 #[inline]
