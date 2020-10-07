@@ -17,12 +17,12 @@ use crate::serde::ser::{Serialize, Serializer};
 use crate::serde::de::{Deserialize, Deserializer, Error as DeError, Unexpected, Visitor};
 
 #[cfg(feature = "u128")]
-#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, Default)]
 /// Represent the n-bytes data. Use associated functions: `from_unit`, `from_bytes`, `from_str`, to create the instance.
 pub struct Byte(u128);
 
 #[cfg(not(feature = "u128"))]
-#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, Default)]
 /// Represent the n-bytes data. Use associated functions: `from_unit`, `from_bytes`, `from_str`, to create the instance.
 pub struct Byte(u64);
 
