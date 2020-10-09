@@ -66,7 +66,7 @@ impl Byte {
     /// ```
     #[cfg(feature = "u128")]
     #[inline]
-    pub fn from_bytes(bytes: u128) -> Byte {
+    pub const fn from_bytes(bytes: u128) -> Byte {
         Byte(bytes)
     }
 
@@ -85,7 +85,7 @@ impl Byte {
     /// ```
     #[cfg(not(feature = "u128"))]
     #[inline]
-    pub fn from_bytes(bytes: u64) -> Byte {
+    pub const fn from_bytes(bytes: u64) -> Byte {
         Byte(bytes)
     }
 
@@ -310,7 +310,7 @@ impl Byte {
     /// ```
     #[cfg(feature = "u128")]
     #[inline]
-    pub fn get_bytes(&self) -> u128 {
+    pub const fn get_bytes(&self) -> u128 {
         self.0
     }
 
@@ -343,7 +343,7 @@ impl Byte {
     /// ```
     #[cfg(not(feature = "u128"))]
     #[inline]
-    pub fn get_bytes(&self) -> u64 {
+    pub const fn get_bytes(&self) -> u64 {
         self.0
     }
 
