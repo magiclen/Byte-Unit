@@ -17,8 +17,6 @@ repository = "magiclen/Byte-Unit"
 branch = "master"
 
 [dependencies]
-utf8-width = "0.1"
-
 serde = { version = "1", optional = true }
 
 [features]
