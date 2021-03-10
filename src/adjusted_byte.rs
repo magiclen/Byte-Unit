@@ -187,10 +187,10 @@ impl Ord for AdjustedByte {
     }
 }
 
-impl Into<Byte> for AdjustedByte {
+impl From<AdjustedByte> for Byte {
     #[inline]
-    fn into(self) -> Byte {
-        self.get_byte()
+    fn from(other: AdjustedByte) -> Byte {
+        other.get_byte()
     }
 }
 

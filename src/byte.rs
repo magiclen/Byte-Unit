@@ -475,18 +475,18 @@ impl Display for Byte {
 }
 
 #[cfg(feature = "u128")]
-impl Into<u128> for Byte {
+impl From<Byte> for u128 {
     #[inline]
-    fn into(self) -> u128 {
-        self.0
+    fn from(b: Byte) -> u128 {
+        b.0
     }
 }
 
 #[cfg(not(feature = "u128"))]
-impl Into<u64> for Byte {
+impl From<Byte> for u64 {
     #[inline]
-    fn into(self) -> u64 {
-        self.0
+    fn from(b: Byte) -> u64 {
+        b.0
     }
 }
 
