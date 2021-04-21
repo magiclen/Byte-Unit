@@ -1,7 +1,7 @@
 Byte Unit
 ====================
 
-[![Build Status](https://travis-ci.org/magiclen/Byte-Unit.svg?branch=master)](https://travis-ci.org/magiclen/Byte-Unit)
+[![CI](https://github.com/magiclen/Byte-Unit/actions/workflows/ci.yml/badge.svg)](https://github.com/magiclen/Byte-Unit/actions/workflows/ci.yml)
 
 A library for interaction with units of bytes. The units are **B** for 1 byte, **KB** for 1000 bytes, **KiB** for 1024 bytes, **MB** for 1000000 bytes, **MiB** for 1048576 bytes, etc, and up to **ZiB** which is 1180591620717411303424 bytes.
 
