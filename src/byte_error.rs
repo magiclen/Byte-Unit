@@ -60,12 +60,12 @@ impl Display for UnitIncorrectError {
 
             if self.also_expect_no_character {
                 f.write_fmt(format_args!(
-                    ", {:?} or no character is excepted.",
+                    ", {:?} or no character is expected.",
                     self.expected_characters[expected_characters_length - 1]
                 ))
             } else {
                 f.write_fmt(format_args!(
-                    " or {:?} is excepted.",
+                    " or {:?} is expected.",
                     self.expected_characters[expected_characters_length - 1]
                 ))
             }
