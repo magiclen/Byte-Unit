@@ -13,8 +13,6 @@ license = "MIT"
 include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE"]
 
 [dependencies]
-utf8-width = "0.1"
-
 serde = { version = "1", optional = true }
 
 [features]
