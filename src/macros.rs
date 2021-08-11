@@ -1,3 +1,35 @@
+/// Convert n Kb to bits.
+///
+/// ## Examples
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_kb_bits!(4);
+///
+/// assert_eq!(500, result);
+/// ```
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_kb_bits!(2.5, f64);
+///
+/// assert_eq!(312, result);
+/// ```
+#[macro_export]
+macro_rules! n_kb_bits {
+    () => {
+        $crate::KILOBIT
+    };
+    ($x:expr) => {
+        $crate::n_kb_bits($x)
+    };
+    ($x:expr, $t:ty) => {
+        $crate::_bytes_as!($x * ($crate::MEGABIT as $t)) / $crate::KILOBYTE
+    };
+}
+
 /// Convert n KB to bytes.
 ///
 /// ## Examples
@@ -59,6 +91,38 @@ macro_rules! n_kib_bytes {
     };
     ($x:expr, $t:ty) => {
         $crate::_bytes_as!($x * ($crate::MEBIBYTE as $t)) / $crate::KIBIBYTE
+    };
+}
+
+/// Convert n Mb to bits.
+///
+/// ## Examples
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_mb_bits!(4);
+///
+/// assert_eq!(500000, result);
+/// ```
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_mb_bits!(2.5, f64);
+///
+/// assert_eq!(312500, result);
+/// ```
+#[macro_export]
+macro_rules! n_mb_bits {
+    () => {
+        $crate::MEGABIT
+    };
+    ($x:expr) => {
+        $crate::n_mb_bits($x)
+    };
+    ($x:expr, $t:ty) => {
+        $crate::_bytes_as!($x * ($crate::MEGABIT as $t))
     };
 }
 
@@ -126,6 +190,38 @@ macro_rules! n_mib_bytes {
     };
 }
 
+/// Convert n Gb to bits.
+///
+/// ## Examples
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_gb_bits!(4);
+///
+/// assert_eq!(500000000, result);
+/// ```
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_gb_bits!(2.5, f64);
+///
+/// assert_eq!(312500000, result);
+/// ```
+#[macro_export]
+macro_rules! n_gb_bits {
+    () => {
+        $crate::GIGABYTE
+    };
+    ($x:expr) => {
+        $crate::n_gb_bits($x)
+    };
+    ($x:expr, $t:ty) => {
+        $crate::n_kb_bytes($crate::_bytes_as!($x * ($crate::MEGABIT as $t)))
+    };
+}
+
 /// Convert n GB to bytes.
 ///
 /// ## Examples
@@ -187,6 +283,38 @@ macro_rules! n_gib_bytes {
     };
     ($x:expr, $t:ty) => {
         $crate::n_kib_bytes($crate::_bytes_as!($x * ($crate::MEBIBYTE as $t)))
+    };
+}
+
+/// Convert n Tb to bits.
+///
+/// ## Examples
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_tb_bits!(4);
+///
+/// assert_eq!(500000000000, result);
+/// ```
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_tb_bits!(2.5, f64);
+///
+/// assert_eq!(312500000000, result);
+/// ```
+#[macro_export]
+macro_rules! n_tb_bits {
+    () => {
+        $crate::TERABIT
+    };
+    ($x:expr) => {
+        $crate::n_tb_bits($x)
+    };
+    ($x:expr, $t:ty) => {
+        $crate::n_mb_bytes($crate::_bytes_as!($x * ($crate::MEGABIT as $t)))
     };
 }
 
@@ -254,6 +382,38 @@ macro_rules! n_tib_bytes {
     };
 }
 
+/// Convert n Pb to bits.
+///
+/// ## Examples
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_pb_bits!(4);
+///
+/// assert_eq!(500000000000000, result);
+/// ```
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_pb_bits!(2.5, f64);
+///
+/// assert_eq!(312500000000000, result);
+/// ```
+#[macro_export]
+macro_rules! n_pb_bits {
+    () => {
+        $crate::PETABIT
+    };
+    ($x:expr) => {
+        $crate::n_pb_bits($x)
+    };
+    ($x:expr, $t:ty) => {
+        $crate::n_gb_bytes($crate::_bytes_as!($x * ($crate::MEGABIT as $t)))
+    };
+}
+
 /// Convert n PB to bytes.
 ///
 /// ## Examples
@@ -315,6 +475,39 @@ macro_rules! n_pib_bytes {
     };
     ($x:expr, $t:ty) => {
         $crate::n_gib_bytes($crate::_bytes_as!($x * ($crate::MEBIBYTE as $t)))
+    };
+}
+
+/// Convert n Eb to bits.
+///
+/// ## Examples
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_eb_bits!(4);
+///
+/// assert_eq!(500000000000000000, result);
+/// ```
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_eb_bits!(2.5, f64);
+///
+/// assert_eq!(312500000000000000, result);
+/// ```
+#[cfg(feature = "u128")]
+#[macro_export]
+macro_rules! n_eb_bits {
+    () => {
+        $crate::EXABIT
+    };
+    ($x:expr) => {
+        $crate::n_eb_bits($x)
+    };
+    ($x:expr, $t:ty) => {
+        $crate::n_tb_bytes($crate::_bytes_as!($x * ($crate::MEGABIT as $t)))
     };
 }
 
@@ -381,6 +574,39 @@ macro_rules! n_eib_bytes {
     };
     ($x:expr, $t:ty) => {
         $crate::n_tib_bytes($crate::_bytes_as!($x * ($crate::MEBIBYTE as $t)))
+    };
+}
+
+/// Convert n Zb to bits.
+///
+/// ## Examples
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_zb_bits!(4);
+///
+/// assert_eq!(500000000000000000000, result);
+/// ```
+///
+/// ```
+/// extern crate byte_unit;
+///
+/// let result = byte_unit::n_zb_bits!(2.5, f64);
+///
+/// assert_eq!(312500000000000000000, result);
+/// ```
+#[cfg(feature = "u128")]
+#[macro_export]
+macro_rules! n_zb_bits {
+    () => {
+        $crate::ZETTABIT
+    };
+    ($x:expr) => {
+        $crate::n_zb_bits($x)
+    };
+    ($x:expr, $t:ty) => {
+        $crate::n_pb_bytes($crate::_bytes_as!($x * ($crate::MEGABIT as $t)))
     };
 }
 
