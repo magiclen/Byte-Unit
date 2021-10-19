@@ -608,7 +608,7 @@ pub(crate) fn get_bytes(value: f64, unit: ByteUnit) -> u128 {
         ByteUnit::GB => n_gb_bytes!(value, f64),
         ByteUnit::GiB => n_gib_bytes!(value, f64),
         ByteUnit::TB => n_tb_bytes!(value, f64),
-        ByteUnit::TiB => n_gib_bytes!(value, f64),
+        ByteUnit::TiB => n_tib_bytes!(value, f64),
         ByteUnit::PB => n_pb_bytes!(value, f64),
         ByteUnit::PiB => n_pib_bytes!(value, f64),
         ByteUnit::EB => n_eb_bytes!(value, f64),
@@ -630,7 +630,7 @@ pub(crate) fn get_bytes(value: f64, unit: ByteUnit) -> u64 {
         ByteUnit::GB => n_gb_bytes!(value, f64),
         ByteUnit::GiB => n_gib_bytes!(value, f64),
         ByteUnit::TB => n_tb_bytes!(value, f64),
-        ByteUnit::TiB => n_gib_bytes!(value, f64),
+        ByteUnit::TiB => n_tib_bytes!(value, f64),
         ByteUnit::PB => n_pb_bytes!(value, f64),
         ByteUnit::PiB => n_pib_bytes!(value, f64),
     }
