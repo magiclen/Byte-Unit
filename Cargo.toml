@@ -1,8 +1,8 @@
 [package]
 name = "byte-unit"
-version = "4.0.13"
+version = "4.0.14"
 authors = ["Magic Len <len@magiclen.org>"]
-edition = "2018"
+edition = "2021"
 repository = "https://github.com/magiclen/byte-unit"
 homepage = "https://magiclen.org/byte-unit"
 keywords = ["byte", "unit", "kb", "mb", "gb"]

@@ -1,5 +1,3 @@
-extern crate utf8_width;
-
 use core::convert::TryFrom;
 use core::str::{from_utf8_unchecked, Bytes, FromStr};
 
@@ -59,8 +57,6 @@ impl ByteUnit {
     /// Get an instance of `ByteUnit` from a string slice.
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::ByteUnit;
     ///
     /// assert_eq!(ByteUnit::B, ByteUnit::from_str("").unwrap());
@@ -90,8 +86,6 @@ impl ByteUnit {
     /// Use string slice to represent this `ByteUnit`.
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::ByteUnit;
     ///
     /// assert_eq!("B", ByteUnit::B.as_str());
@@ -134,8 +128,6 @@ impl ByteUnit {
     /// Get bytes represented by this `ByteUnit`.
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::ByteUnit;
     ///
     /// assert_eq!(1000000000000000000000, ByteUnit::ZB.get_unit_bytes());
@@ -166,8 +158,6 @@ impl ByteUnit {
     /// Get bytes represented by this `ByteUnit`.
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::ByteUnit;
     ///
     /// assert_eq!(1024, ByteUnit::KiB.get_unit_bytes());

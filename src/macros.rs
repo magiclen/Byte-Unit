@@ -3,16 +3,12 @@
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_kb_bytes!(4);
 ///
 /// assert_eq!(4000, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_kb_bytes!(2.5, f64);
 ///
 /// assert_eq!(2500, result);
@@ -35,16 +31,12 @@ macro_rules! n_kb_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_kib_bytes!(4);
 ///
 /// assert_eq!(4096, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_kib_bytes!(2.5, f64);
 ///
 /// assert_eq!(2560, result);
@@ -67,16 +59,12 @@ macro_rules! n_kib_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_mb_bytes!(4);
 ///
 /// assert_eq!(4000000, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_mb_bytes!(2.5, f64);
 ///
 /// assert_eq!(2500000, result);
@@ -99,16 +87,12 @@ macro_rules! n_mb_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_mib_bytes!(4);
 ///
 /// assert_eq!(4194304, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_mib_bytes!(2.5, f64);
 ///
 /// assert_eq!(2621440, result);
@@ -131,16 +115,12 @@ macro_rules! n_mib_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_gb_bytes!(4);
 ///
 /// assert_eq!(4000000000, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_gb_bytes!(2.5, f64);
 ///
 /// assert_eq!(2500000000, result);
@@ -163,16 +143,12 @@ macro_rules! n_gb_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_gib_bytes!(4);
 ///
 /// assert_eq!(4294967296, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_gib_bytes!(2.5, f64);
 ///
 /// assert_eq!(2684354560, result);
@@ -195,16 +171,12 @@ macro_rules! n_gib_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_tb_bytes!(4);
 ///
 /// assert_eq!(4000000000000, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_tb_bytes!(2.5, f64);
 ///
 /// assert_eq!(2500000000000, result);
@@ -227,16 +199,12 @@ macro_rules! n_tb_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_tib_bytes!(4);
 ///
 /// assert_eq!(4398046511104, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_tib_bytes!(2.5, f64);
 ///
 /// assert_eq!(2748779069440, result);
@@ -259,16 +227,12 @@ macro_rules! n_tib_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_pb_bytes!(4);
 ///
 /// assert_eq!(4000000000000000, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_pb_bytes!(2.5, f64);
 ///
 /// assert_eq!(2500000000000000, result);
@@ -291,16 +255,12 @@ macro_rules! n_pb_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_pib_bytes!(4);
 ///
 /// assert_eq!(4503599627370496, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_pib_bytes!(2.5, f64);
 ///
 /// assert_eq!(2814749767106560, result);
@@ -323,16 +283,12 @@ macro_rules! n_pib_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_eb_bytes!(4);
 ///
 /// assert_eq!(4000000000000000000, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_eb_bytes!(2.5, f64);
 ///
 /// assert_eq!(2500000000000000000, result);
@@ -356,16 +312,12 @@ macro_rules! n_eb_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_eib_bytes!(4);
 ///
 /// assert_eq!(4611686018427387904, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_eib_bytes!(2.5, f64);
 ///
 /// assert_eq!(2882303761517117440, result);
@@ -389,16 +341,12 @@ macro_rules! n_eib_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_zb_bytes!(4);
 ///
 /// assert_eq!(4000000000000000000000, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_zb_bytes!(2.5, f64);
 ///
 /// assert_eq!(2500000000000000000000, result);
@@ -422,16 +370,12 @@ macro_rules! n_zb_bytes {
 /// ## Examples
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_zib_bytes!(4);
 ///
 /// assert_eq!(4722366482869645213696, result);
 /// ```
 ///
 /// ```
-/// extern crate byte_unit;
-///
 /// let result = byte_unit::n_zib_bytes!(2.5, f64);
 ///
 /// assert_eq!(2951479051793528258560, result);

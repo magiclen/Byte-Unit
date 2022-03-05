@@ -24,8 +24,6 @@ impl AdjustedByte {
     /// # Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte = Byte::from_unit(1555f64, ByteUnit::KB).unwrap();
@@ -36,8 +34,6 @@ impl AdjustedByte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte = Byte::from_unit(1555.2f64, ByteUnit::B).unwrap();
@@ -70,8 +66,6 @@ impl AdjustedByte {
     /// ## Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte = Byte::from_str("123456789123456").unwrap();
@@ -111,8 +105,6 @@ impl PartialEq for AdjustedByte {
     /// # Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte1 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
@@ -122,8 +114,6 @@ impl PartialEq for AdjustedByte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte1 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
@@ -158,8 +148,6 @@ impl Ord for AdjustedByte {
     /// # Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte1 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
@@ -169,8 +157,6 @@ impl Ord for AdjustedByte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte1 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();

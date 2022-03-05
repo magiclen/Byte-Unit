@@ -32,8 +32,6 @@ impl Byte {
     /// ## Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let result = Byte::from_unit(1500f64, ByteUnit::KB).unwrap();
@@ -56,8 +54,6 @@ impl Byte {
     /// ## Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let result = Byte::from_bytes(1500000);
@@ -75,8 +71,6 @@ impl Byte {
     /// ## Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let result = Byte::from_bytes(1500000);
@@ -94,8 +88,6 @@ impl Byte {
     /// ## Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let result = Byte::from_str("123KiB").unwrap();
@@ -104,8 +96,6 @@ impl Byte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let result = Byte::from_str("50.84 MB").unwrap();
@@ -114,8 +104,6 @@ impl Byte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let result = Byte::from_str("8 B").unwrap(); // 8 bytes
@@ -124,8 +112,6 @@ impl Byte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let result = Byte::from_str("8").unwrap(); // 8 bytes
@@ -134,8 +120,6 @@ impl Byte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let result = Byte::from_str("8 b").unwrap(); // 8 bytes
@@ -144,8 +128,6 @@ impl Byte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let result = Byte::from_str("8 kb").unwrap(); // 8 kilobytes
@@ -154,8 +136,6 @@ impl Byte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let result = Byte::from_str("8 kib").unwrap(); // 8 kibibytes
@@ -164,8 +144,6 @@ impl Byte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let result = Byte::from_str("8 k").unwrap(); // 8 kilobytes
@@ -286,8 +264,6 @@ impl Byte {
     /// ## Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::Byte;
     ///
     /// let byte = Byte::from_str("123KiB").unwrap();
@@ -298,8 +274,6 @@ impl Byte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::Byte;
     ///
     /// let byte = Byte::from_str("50.84 MB").unwrap();
@@ -319,8 +293,6 @@ impl Byte {
     /// ## Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::Byte;
     ///
     /// let byte = Byte::from_str("123KiB").unwrap();
@@ -331,8 +303,6 @@ impl Byte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::Byte;
     ///
     /// let byte = Byte::from_str("50.84 MB").unwrap();
@@ -352,8 +322,6 @@ impl Byte {
     /// ## Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte = Byte::from_str("123KiB").unwrap();
@@ -364,8 +332,6 @@ impl Byte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::{Byte, ByteUnit};
     ///
     /// let byte = Byte::from_str("50.84 MB").unwrap();
@@ -391,8 +357,6 @@ impl Byte {
     /// ## Examples
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::Byte;
     ///
     /// let byte = Byte::from_str("123KiB").unwrap();
@@ -403,8 +367,6 @@ impl Byte {
     /// ```
     ///
     /// ```
-    /// extern crate byte_unit;
-    ///
     /// use byte_unit::Byte;
     ///
     /// let byte = Byte::from_str("50.84 MB").unwrap();
