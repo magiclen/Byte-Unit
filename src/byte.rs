@@ -6,9 +6,7 @@ use alloc::string::String;
 
 use alloc::fmt::{self, Display, Formatter};
 
-use crate::{
-    get_char_from_bytes, read_xib, AdjustedByte, ByteError, ByteUnit, ValueIncorrectError,
-};
+use crate::{read_xib, AdjustedByte, ByteError, ByteUnit, ValueIncorrectError};
 
 #[cfg(feature = "serde")]
 use crate::serde::ser::{Serialize, Serializer};
@@ -155,16 +153,14 @@ impl Byte {
     pub fn from_str<S: AsRef<str>>(s: S) -> Result<Byte, ByteError> {
         let s = s.as_ref().trim();
 
-        let mut bytes = s.bytes();
+        let mut chars = s.chars();
 
-        let mut value = match bytes.next() {
+        let mut value = match chars.next() {
             Some(e) => {
                 match e {
-                    b'0'..=b'9' => f64::from(e - b'0'),
+                    '0'..='9' => f64::from(e as u8 - b'0'),
                     _ => {
-                        return Err(
-                            ValueIncorrectError::NotNumber(get_char_from_bytes(e, bytes)).into()
-                        );
+                        return Err(ValueIncorrectError::NotNumber(e).into());
                     }
                 }
             }
@@ -172,39 +168,38 @@ impl Byte {
         };
 
         let e = 'outer: loop {
-            match bytes.next() {
+            match chars.next() {
                 Some(e) => {
                     match e {
-                        b'0'..=b'9' => {
-                            value = value * 10.0 + f64::from(e - b'0');
+                        '0'..='9' => {
+                            value = value * 10.0 + f64::from(e as u8 - b'0');
                         }
-                        b'.' => {
+                        '.' => {
                             let mut i = 0.1;
 
                             loop {
-                                match bytes.next() {
+                                match chars.next() {
                                     Some(e) => {
                                         match e {
-                                            b'0'..=b'9' => {
-                                                value += f64::from(e - b'0') * i;
+                                            '0'..='9' => {
+                                                value += f64::from(e as u8 - b'0') * i;
 
                                                 i /= 10.0;
                                             }
                                             _ => {
                                                 if (i * 10.0) as u8 == 1 {
-                                                    return Err(ValueIncorrectError::NotNumber(
-                                                        get_char_from_bytes(e, bytes),
-                                                    )
-                                                    .into());
+                                                    return Err(
+                                                        ValueIncorrectError::NotNumber(e).into()
+                                                    );
                                                 }
 
                                                 match e {
-                                                    b' ' => {
+                                                    ' ' => {
                                                         loop {
-                                                            match bytes.next() {
+                                                            match chars.next() {
                                                                 Some(e) => {
                                                                     match e {
-                                                                        b' ' => (),
+                                                                        ' ' => (),
                                                                         _ => break 'outer Some(e),
                                                                     }
                                                                 }
@@ -219,10 +214,7 @@ impl Byte {
                                     }
                                     None => {
                                         if (i * 10.0) as u8 == 1 {
-                                            return Err(ValueIncorrectError::NotNumber(
-                                                get_char_from_bytes(e, bytes),
-                                            )
-                                            .into());
+                                            return Err(ValueIncorrectError::NotNumber(e).into());
                                         }
 
                                         break 'outer None;
@@ -230,12 +222,12 @@ impl Byte {
                                 }
                             }
                         }
-                        b' ' => {
+                        ' ' => {
                             loop {
-                                match bytes.next() {
+                                match chars.next() {
                                     Some(e) => {
                                         match e {
-                                            b' ' => (),
+                                            ' ' => (),
                                             _ => break 'outer Some(e),
                                         }
                                     }
@@ -250,7 +242,7 @@ impl Byte {
             }
         };
 
-        let unit = read_xib(e, bytes)?;
+        let unit = read_xib(e, chars)?;
 
         let bytes = get_bytes(value, unit);
 
