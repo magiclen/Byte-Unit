@@ -15,9 +15,9 @@ include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE"]
 [dependencies]
 utf8-width = "0.1"
 
-serde = { version = "1", optional = true }
+serde = { version = "1", default-features = false, optional = true }
 
 [features]
 default = ["std", "u128"]
-std = []
+std = ["serde/std"]
 u128 = []
