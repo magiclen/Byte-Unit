@@ -1,7 +1,7 @@
 #[cfg(feature = "std")]
 use std::error::Error;
 
-use alloc::fmt::{self, Display, Formatter};
+use core::fmt::{self, Display, Formatter};
 
 #[derive(Debug, Clone)]
 /// Error types for parsing values.
