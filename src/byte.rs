@@ -4,7 +4,7 @@ use core::str::FromStr;
 #[cfg(feature = "serde")]
 use alloc::string::String;
 
-use alloc::fmt::{self, Display, Formatter};
+use core::fmt::{self, Display, Formatter};
 
 use crate::{
     get_char_from_bytes, read_xib, AdjustedByte, ByteError, ByteUnit, ValueIncorrectError,

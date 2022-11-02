@@ -4,7 +4,7 @@ use core::str::{from_utf8_unchecked, Bytes, FromStr};
 #[cfg(feature = "serde")]
 use alloc::string::String;
 
-use alloc::fmt::{self, Display, Formatter};
+use core::fmt::{self, Display, Formatter};
 
 use crate::UnitIncorrectError;
 
