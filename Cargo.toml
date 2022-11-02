@@ -1,6 +1,6 @@
 [package]
 name = "byte-unit"
-version = "4.0.16"
+version = "4.0.17"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2021"
 repository = "https://github.com/magiclen/byte-unit"
@@ -15,11 +15,11 @@ include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE"]
 [dependencies]
 utf8-width = "0.1"
 
-serde = { version = "1", default-features = false, optional = true }
+serde_dep = { package = "serde", version = "1", default-features = false, features = ["alloc"], optional = true }
 
 [features]
 default = ["std", "u128"]
-serde = ["alloc"]
-std = ["serde/std", "alloc"]
+serde = ["alloc", "serde_dep"]
+std = ["serde_dep/std", "alloc"]
 alloc = []
 u128 = []

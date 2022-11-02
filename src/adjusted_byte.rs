@@ -2,7 +2,7 @@ use core::cmp::Ordering;
 
 use core::fmt::{self, Display, Formatter};
 
-#[cfg(any(feature = "serde", feature = "alloc"))]
+#[cfg(feature = "alloc")]
 use alloc::string::String;
 
 use crate::{get_bytes, Byte, ByteUnit};
