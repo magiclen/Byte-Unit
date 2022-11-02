@@ -220,7 +220,7 @@ impl<'de> Deserialize<'de> for AdjustedByte {
 
                         #[cfg(not(feature = "u128"))]
                             {
-                                if v > u64::max_value() as i128 {
+                                if v > u64::MAX as i128 {
                                     Err(DeError::invalid_value(Unexpected::Other(format!("integer `{}`", v).as_str()), &self))
                                 } else {
                                     Ok(Byte::from_bytes(v as u64).get_appropriate_unit(false))
@@ -241,7 +241,7 @@ impl<'de> Deserialize<'de> for AdjustedByte {
 
                     #[cfg(not(feature = "u128"))]
                         {
-                            if v > u64::max_value() as u128 {
+                            if v > u64::MAX as u128 {
                                 Err(DeError::invalid_value(Unexpected::Other(format!("integer `{}`", v).as_str()), &self))
                             } else {
                                 Ok(Byte::from_bytes(v as u64).get_appropriate_unit(false))
