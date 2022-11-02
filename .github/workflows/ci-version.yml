@@ -38,6 +38,9 @@ jobs:
       - run: cargo build --release --no-default-features
       - run: cargo test --release --no-default-features
       - run: cargo doc --release --no-default-features
+      - run: cargo build --release --no-default-features --features alloc
+      - run: cargo test --release --no-default-features --features alloc
+      - run: cargo doc --release --no-default-features --features alloc
       - run: cargo build --release --no-default-features --features serde
       - run: cargo test --release --no-default-features --features serde
       - run: cargo doc --release --no-default-features --features serde
