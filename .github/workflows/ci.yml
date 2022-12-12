@@ -38,6 +38,12 @@ jobs:
           - ubuntu-latest
           - macos-latest
           - windows-latest
+        feature-flags:
+          - ''
+          - '--features serde'
+          - '--no-default-features'
+          - '--no-default-features --features alloc'
+          - '--no-default-features --features serde'
         toolchain:
           - stable
           - nightly
@@ -50,18 +56,6 @@ jobs:
           profile: minimal
           toolchain: ${{ matrix.toolchain }}
           override: true
-      - run: cargo build
-      - run: cargo test
-      - run: cargo doc
-      - run: cargo build --features serde
-      - run: cargo test --features serde
-      - run: cargo doc --features serde
-      - run: cargo build --no-default-features
-      - run: cargo test --no-default-features
-      - run: cargo doc --no-default-features
-      - run: cargo build --no-default-features --features alloc
-      - run: cargo test --no-default-features --features alloc
-      - run: cargo doc --no-default-features --features alloc
-      - run: cargo build --no-default-features --features serde
-      - run: cargo test --no-default-features --features serde
-      - run: cargo doc --no-default-features --features serde
+      - run: cargo build ${{ matrix.feature-flags }}
+      - run: cargo test ${{ matrix.feature-flags }}
+      - run: cargo doc ${{ matrix.feature-flags }}
