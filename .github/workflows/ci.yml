@@ -38,15 +38,15 @@ jobs:
           - ubuntu-latest
           - macos-latest
           - windows-latest
+        toolchain:
+          - stable
+          - nightly
         feature-flags:
           - ''
           - '--features serde'
           - '--no-default-features'
           - '--no-default-features --features alloc'
           - '--no-default-features --features serde'
-        toolchain:
-          - stable
-          - nightly
     name: Test ${{ matrix.toolchain }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
