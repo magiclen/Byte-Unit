@@ -211,7 +211,7 @@ impl<'de> Deserialize<'de> for AdjustedByte {
                         E: DeError,
                 {
                     if v < 0 {
-                        Err(DeError::invalid_value(Unexpected::Other(format!("integer `{}`", v).as_str()), &self))
+                        Err(DeError::invalid_value(Unexpected::Other(format!("integer `{v}`").as_str()), &self))
                     } else {
                         #[cfg(feature = "u128")]
                             {

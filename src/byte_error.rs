@@ -16,10 +16,10 @@ impl Display for ValueIncorrectError {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
         match self {
             ValueIncorrectError::Negative(value) => {
-                f.write_fmt(format_args!("The value `{}` is negative.", value))
+                f.write_fmt(format_args!("The value `{value}` is negative."))
             }
             ValueIncorrectError::NotNumber(c) => {
-                f.write_fmt(format_args!("The character {:?} is not a number.", c))
+                f.write_fmt(format_args!("The character {c:?} is not a number."))
             }
             ValueIncorrectError::NoValue => f.write_str("No value."),
         }
@@ -54,7 +54,7 @@ impl Display for UnitIncorrectError {
 
             if expected_characters_length > 1 {
                 for c in self.expected_characters[1..].iter().take(expected_characters_length - 2) {
-                    f.write_fmt(format_args!(", {:?}", c))?;
+                    f.write_fmt(format_args!(", {c:?}"))?;
                 }
             }
 
