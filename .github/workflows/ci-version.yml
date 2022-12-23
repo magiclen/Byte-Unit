@@ -24,7 +24,7 @@ jobs:
           - ''
           - '--features serde'
           - '--no-default-features'
-          - '-no-default-features --features alloc'
+          - '--no-default-features --features alloc'
           - '--no-default-features --features serde'
     name: Test ${{ matrix.toolchain }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
