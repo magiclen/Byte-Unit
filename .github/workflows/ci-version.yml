@@ -20,7 +20,7 @@ jobs:
         toolchain:
           - stable
           - nightly
-        feature-flags:
+        features:
           -
           - --features serde
           - --no-default-features
