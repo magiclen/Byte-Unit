@@ -15,11 +15,11 @@ include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE"]
 [dependencies]
 utf8-width = "0.1"
 
-serde_dep = { package = "serde", version = "1", default-features = false, features = ["alloc"], optional = true }
+serde = { version = "1", default-features = false, features = ["alloc"], optional = true }
 
 [features]
 default = ["std", "u128"]
-serde = ["alloc", "serde_dep"]
-std = ["serde_dep/std", "alloc"]
+serde = ["alloc"]
+std = ["serde/std", "alloc"]
 alloc = []
 u128 = []

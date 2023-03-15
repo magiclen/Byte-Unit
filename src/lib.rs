@@ -156,7 +156,7 @@ extern crate alloc;
 
 #[cfg(feature = "serde")]
 #[macro_use]
-extern crate serde_dep as serde;
+extern crate serde;
 
 #[cfg(feature = "u128")]
 #[macro_use]
