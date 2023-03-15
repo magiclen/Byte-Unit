@@ -19,7 +19,7 @@ serde = { version = "1", default-features = false, features = ["alloc"], optiona
 
 [features]
 default = ["std", "u128"]
-serde = ["alloc"]
+serde = ["alloc", "dep:serde"]
 std = ["serde/std", "alloc"]
 alloc = []
 u128 = []
