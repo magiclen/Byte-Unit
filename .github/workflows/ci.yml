@@ -41,13 +41,13 @@ jobs:
         toolchain:
           - stable
           - nightly
-        feature-flags:
-          - ''
-          - '--features serde'
-          - '--no-default-features'
-          - '--no-default-features --features alloc'
-          - '--no-default-features --features serde'
-    name: Test ${{ matrix.toolchain }} on ${{ matrix.os }}
+        features:
+          -
+          - --features serde
+          - --no-default-features
+          - --no-default-features --features alloc
+          - --no-default-features --features serde
+    name: Test ${{ matrix.toolchain }} on ${{ matrix.os }} (${{ matrix.features }})
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -56,6 +56,5 @@ jobs:
           profile: minimal
           toolchain: ${{ matrix.toolchain }}
           override: true
-      - run: cargo build ${{ matrix.feature-flags }}
-      - run: cargo test ${{ matrix.feature-flags }}
-      - run: cargo doc ${{ matrix.feature-flags }}
+      - run: cargo test ${{ matrix.features }}
+      - run: cargo doc ${{ matrix.features }}
