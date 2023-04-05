@@ -1,18 +1,16 @@
-use core::convert::TryFrom;
-use core::str::{from_utf8_unchecked, Bytes, FromStr};
-
 #[cfg(feature = "serde")]
 use alloc::string::String;
-
-use core::fmt::{self, Display, Formatter};
-
-use crate::UnitIncorrectError;
-
-#[cfg(feature = "serde")]
-use crate::serde::ser::{Serialize, Serializer};
+use core::{
+    convert::TryFrom,
+    fmt::{self, Display, Formatter},
+    str::{from_utf8_unchecked, Bytes, FromStr},
+};
 
 #[cfg(feature = "serde")]
 use crate::serde::de::{Deserialize, Deserializer, Error as DeError, Visitor};
+#[cfg(feature = "serde")]
+use crate::serde::ser::{Serialize, Serializer};
+use crate::UnitIncorrectError;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 /// The unit of bytes.
@@ -233,137 +231,117 @@ pub(crate) fn get_char_from_bytes(e: u8, mut bytes: Bytes) -> char {
 
 pub(crate) fn read_xib(e: Option<u8>, mut bytes: Bytes) -> Result<ByteUnit, UnitIncorrectError> {
     match e {
-        Some(e) => {
-            match e.to_ascii_uppercase() {
-                b'B' => {
-                    match bytes.next() {
-                        Some(e) => {
-                            Err(UnitIncorrectError {
-                                character: get_char_from_bytes(e, bytes),
-                                expected_characters: &[],
-                                also_expect_no_character: false,
-                            })
-                        }
-                        None => Ok(ByteUnit::B),
-                    }
+        Some(e) => match e.to_ascii_uppercase() {
+            b'B' => match bytes.next() {
+                Some(e) => Err(UnitIncorrectError {
+                    character:                get_char_from_bytes(e, bytes),
+                    expected_characters:      &[],
+                    also_expect_no_character: false,
+                }),
+                None => Ok(ByteUnit::B),
+            },
+            b'K' => {
+                if read_ib(bytes)? {
+                    Ok(ByteUnit::KiB)
+                } else {
+                    Ok(ByteUnit::KB)
                 }
-                b'K' => {
-                    if read_ib(bytes)? {
-                        Ok(ByteUnit::KiB)
-                    } else {
-                        Ok(ByteUnit::KB)
-                    }
+            },
+            b'M' => {
+                if read_ib(bytes)? {
+                    Ok(ByteUnit::MiB)
+                } else {
+                    Ok(ByteUnit::MB)
                 }
-                b'M' => {
-                    if read_ib(bytes)? {
-                        Ok(ByteUnit::MiB)
-                    } else {
-                        Ok(ByteUnit::MB)
-                    }
+            },
+            b'G' => {
+                if read_ib(bytes)? {
+                    Ok(ByteUnit::GiB)
+                } else {
+                    Ok(ByteUnit::GB)
                 }
-                b'G' => {
-                    if read_ib(bytes)? {
-                        Ok(ByteUnit::GiB)
-                    } else {
-                        Ok(ByteUnit::GB)
-                    }
+            },
+            b'T' => {
+                if read_ib(bytes)? {
+                    Ok(ByteUnit::TiB)
+                } else {
+                    Ok(ByteUnit::TB)
                 }
-                b'T' => {
-                    if read_ib(bytes)? {
-                        Ok(ByteUnit::TiB)
-                    } else {
-                        Ok(ByteUnit::TB)
-                    }
+            },
+            b'P' => {
+                if read_ib(bytes)? {
+                    Ok(ByteUnit::PiB)
+                } else {
+                    Ok(ByteUnit::PB)
                 }
-                b'P' => {
-                    if read_ib(bytes)? {
-                        Ok(ByteUnit::PiB)
-                    } else {
-                        Ok(ByteUnit::PB)
-                    }
+            },
+            #[cfg(feature = "u128")]
+            b'E' => {
+                if read_ib(bytes)? {
+                    Ok(ByteUnit::EiB)
+                } else {
+                    Ok(ByteUnit::EB)
                 }
+            },
+            #[cfg(feature = "u128")]
+            b'Z' => {
+                if read_ib(bytes)? {
+                    Ok(ByteUnit::ZiB)
+                } else {
+                    Ok(ByteUnit::ZB)
+                }
+            },
+            _ => {
                 #[cfg(feature = "u128")]
-                b'E' => {
-                    if read_ib(bytes)? {
-                        Ok(ByteUnit::EiB)
-                    } else {
-                        Ok(ByteUnit::EB)
-                    }
+                {
+                    Err(UnitIncorrectError {
+                        character:                get_char_from_bytes(e, bytes),
+                        expected_characters:      &['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z'],
+                        also_expect_no_character: true,
+                    })
                 }
-                #[cfg(feature = "u128")]
-                b'Z' => {
-                    if read_ib(bytes)? {
-                        Ok(ByteUnit::ZiB)
-                    } else {
-                        Ok(ByteUnit::ZB)
-                    }
+                #[cfg(not(feature = "u128"))]
+                {
+                    Err(UnitIncorrectError {
+                        character:                get_char_from_bytes(e, bytes),
+                        expected_characters:      &['B', 'K', 'M', 'G', 'T', 'P'],
+                        also_expect_no_character: true,
+                    })
                 }
-                _ => {
-                    #[cfg(feature = "u128")]
-                    {
-                        Err(UnitIncorrectError {
-                            character: get_char_from_bytes(e, bytes),
-                            expected_characters: &['B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z'],
-                            also_expect_no_character: true,
-                        })
-                    }
-                    #[cfg(not(feature = "u128"))]
-                    {
-                        Err(UnitIncorrectError {
-                            character: get_char_from_bytes(e, bytes),
-                            expected_characters: &['B', 'K', 'M', 'G', 'T', 'P'],
-                            also_expect_no_character: true,
-                        })
-                    }
-                }
-            }
-        }
+            },
+        },
         None => Ok(ByteUnit::B),
     }
 }
 
 fn read_ib(mut bytes: Bytes) -> Result<bool, UnitIncorrectError> {
     match bytes.next() {
-        Some(e) => {
-            match e.to_ascii_uppercase() {
-                b'I' => {
-                    match bytes.next() {
-                        Some(e) => {
-                            match e.to_ascii_uppercase() {
-                                b'B' => Ok(true),
-                                _ => {
-                                    Err(UnitIncorrectError {
-                                        character: get_char_from_bytes(e, bytes),
-                                        expected_characters: &['B'],
-                                        also_expect_no_character: false,
-                                    })
-                                }
-                            }
-                        }
-                        None => Ok(true),
-                    }
-                }
-                b'B' => {
-                    match bytes.next() {
-                        Some(e) => {
-                            Err(UnitIncorrectError {
-                                character: get_char_from_bytes(e, bytes),
-                                expected_characters: &[],
-                                also_expect_no_character: false,
-                            })
-                        }
-                        None => Ok(false),
-                    }
-                }
-                _ => {
-                    Err(UnitIncorrectError {
-                        character: get_char_from_bytes(e, bytes),
-                        expected_characters: &['B', 'i'],
+        Some(e) => match e.to_ascii_uppercase() {
+            b'I' => match bytes.next() {
+                Some(e) => match e.to_ascii_uppercase() {
+                    b'B' => Ok(true),
+                    _ => Err(UnitIncorrectError {
+                        character:                get_char_from_bytes(e, bytes),
+                        expected_characters:      &['B'],
                         also_expect_no_character: false,
-                    })
-                }
-            }
-        }
+                    }),
+                },
+                None => Ok(true),
+            },
+            b'B' => match bytes.next() {
+                Some(e) => Err(UnitIncorrectError {
+                    character:                get_char_from_bytes(e, bytes),
+                    expected_characters:      &[],
+                    also_expect_no_character: false,
+                }),
+                None => Ok(false),
+            },
+            _ => Err(UnitIncorrectError {
+                character:                get_char_from_bytes(e, bytes),
+                expected_characters:      &['B', 'i'],
+                also_expect_no_character: false,
+            }),
+        },
         None => Ok(false),
     }
 }

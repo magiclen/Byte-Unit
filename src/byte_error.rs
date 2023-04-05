@@ -1,7 +1,6 @@
+use core::fmt::{self, Display, Formatter};
 #[cfg(feature = "std")]
 use std::error::Error;
-
-use core::fmt::{self, Display, Formatter};
 
 #[derive(Debug, Clone)]
 /// Error types for parsing values.
@@ -17,10 +16,10 @@ impl Display for ValueIncorrectError {
         match self {
             ValueIncorrectError::Negative(value) => {
                 f.write_fmt(format_args!("The value `{value}` is negative."))
-            }
+            },
             ValueIncorrectError::NotNumber(c) => {
                 f.write_fmt(format_args!("The character {c:?} is not a number."))
-            }
+            },
             ValueIncorrectError::NoValue => f.write_str("No value."),
         }
     }
@@ -32,8 +31,8 @@ impl Error for ValueIncorrectError {}
 #[derive(Debug, Clone)]
 /// Errors for `ByteUnit`.
 pub struct UnitIncorrectError {
-    pub character: char,
-    pub expected_characters: &'static [char],
+    pub character:                char,
+    pub expected_characters:      &'static [char],
     pub also_expect_no_character: bool,
 }
 

@@ -174,13 +174,12 @@ mod byte;
 mod byte_error;
 mod byte_unit;
 
-#[cfg(feature = "u128")]
-pub use self::u128::*;
-
-#[cfg(not(feature = "u128"))]
-pub use self::u64::*;
-
-pub use self::byte_unit::*;
 pub use adjusted_byte::*;
 pub use byte::*;
 pub use byte_error::*;
+
+pub use self::byte_unit::*;
+#[cfg(feature = "u128")]
+pub use self::u128::*;
+#[cfg(not(feature = "u128"))]
+pub use self::u64::*;

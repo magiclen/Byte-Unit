@@ -1,23 +1,21 @@
-use core::cmp::Ordering;
-
-use core::fmt::{self, Display, Formatter};
-
 #[cfg(feature = "alloc")]
 use alloc::string::String;
-
-use crate::{get_bytes, Byte, ByteUnit};
-
-#[cfg(feature = "serde")]
-use crate::serde::ser::{Serialize, Serializer};
+use core::{
+    cmp::Ordering,
+    fmt::{self, Display, Formatter},
+};
 
 #[cfg(feature = "serde")]
 use crate::serde::de::{Deserialize, Deserializer, Error as DeError, Unexpected, Visitor};
+#[cfg(feature = "serde")]
+use crate::serde::ser::{Serialize, Serializer};
+use crate::{get_bytes, Byte, ByteUnit};
 
 #[derive(Debug, Clone, Copy)]
 /// Generated from the `get_appropriate_unit` and `get_adjusted_unit` methods of a `Byte` object.
 pub struct AdjustedByte {
     pub(crate) value: f64,
-    pub(crate) unit: ByteUnit,
+    pub(crate) unit:  ByteUnit,
 }
 
 impl AdjustedByte {
@@ -113,7 +111,10 @@ impl PartialEq for AdjustedByte {
     /// let byte1 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
     /// let byte2 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
     ///
-    /// assert_eq!(byte1.get_appropriate_unit(false), byte2.get_appropriate_unit(true));
+    /// assert_eq!(
+    ///     byte1.get_appropriate_unit(false),
+    ///     byte2.get_appropriate_unit(true)
+    /// );
     /// ```
     ///
     /// ```
@@ -122,7 +123,10 @@ impl PartialEq for AdjustedByte {
     /// let byte1 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
     /// let byte2 = Byte::from_unit(1f64, ByteUnit::MiB).unwrap();
     ///
-    /// assert_eq!(byte1.get_appropriate_unit(true), byte2.get_appropriate_unit(false));
+    /// assert_eq!(
+    ///     byte1.get_appropriate_unit(true),
+    ///     byte2.get_appropriate_unit(false)
+    /// );
     /// ```
     #[inline]
     fn eq(&self, other: &AdjustedByte) -> bool {
@@ -156,7 +160,9 @@ impl Ord for AdjustedByte {
     /// let byte1 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
     /// let byte2 = Byte::from_unit(1025f64, ByteUnit::KiB).unwrap();
     ///
-    /// assert!(byte1.get_appropriate_unit(false) < byte2.get_appropriate_unit(true));
+    /// assert!(
+    ///     byte1.get_appropriate_unit(false) < byte2.get_appropriate_unit(true)
+    /// );
     /// ```
     ///
     /// ```
@@ -165,7 +171,9 @@ impl Ord for AdjustedByte {
     /// let byte1 = Byte::from_unit(1024f64, ByteUnit::KiB).unwrap();
     /// let byte2 = Byte::from_unit(1.01f64, ByteUnit::MiB).unwrap();
     ///
-    /// assert!(byte1.get_appropriate_unit(true) < byte2.get_appropriate_unit(false));
+    /// assert!(
+    ///     byte1.get_appropriate_unit(true) < byte2.get_appropriate_unit(false)
+    /// );
     /// ```
     #[inline]
     fn cmp(&self, other: &AdjustedByte) -> Ordering {
