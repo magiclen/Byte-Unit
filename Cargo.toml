@@ -9,7 +9,6 @@ homepage = "https://magiclen.org/byte-unit"
 keywords = ["byte", "unit", "kb", "mb", "gb"]
 categories = ["no-std", "parser-implementations", "value-formatting"]
 description = "A library for interaction with units of bytes."
-readme = "README.md"
 license = "MIT"
 include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE"]
 
