@@ -167,7 +167,7 @@ impl Unit {
         self.as_bits_u128() as u64
     }
 
-    #[cfg(any(feature = "byte", feature = "bit"))]
+    #[cfg(feature = "byte")]
     #[inline]
     pub(crate) const fn as_bytes_u128(self) -> u128 {
         debug_assert!(!matches!(self, Unit::Bit));
@@ -175,7 +175,7 @@ impl Unit {
         self.as_bits_u128() >> 3
     }
 
-    #[cfg(any(feature = "byte", feature = "bit"))]
+    #[cfg(feature = "byte")]
     #[cfg(not(feature = "u128"))]
     #[inline]
     pub(crate) const fn as_bytes_u64(self) -> u64 {
