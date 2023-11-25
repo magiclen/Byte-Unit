@@ -66,6 +66,23 @@ assert_eq!("15.5 KB", format!("{byte:#}"));
 assert_eq!("15500 B", format!("{byte:#.0}"));
 ```
 
+#### Arithmetic
+
+There are `add`, `subtract`, `multiply`, and `divide` methods.
+
+```rust
+use byte_unit::Byte;
+
+let a = Byte::from_u64(15500);
+let b = Byte::from_u64(500);
+
+assert_eq!(16000, a.add(b).unwrap().as_u64());
+assert_eq!(15000, a.subtract(b).unwrap().as_u64());
+
+assert_eq!(31000, a.multiply(2).unwrap().as_u64());
+assert_eq!(3100, a.divide(5).unwrap().as_u64());
+```
+
 #### Find out an appropriate Unit
 
 The `get_exact_unit` and `get_recoverable_unit` methods is useful if you want to find out a unit that is appropriate for a `Byte` instance.
