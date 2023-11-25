@@ -60,7 +60,7 @@ jobs:
           - macos-latest
           - windows-latest
         toolchain:
-          - "1.70"
+          - "1.60"
         features:
           -
           - --features u128
