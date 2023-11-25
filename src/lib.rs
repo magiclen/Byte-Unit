@@ -37,23 +37,31 @@ The struct `Byte` can be used for representing a size in bytes.
 The `from_*` associated functions can be used to create a `Byte` instance from different data types.  The `as_*` methods can retrieve the size as a primitive type.
 
 ```rust
+# #[cfg(feature = "byte")]
+# {
 use byte_unit::{Byte, Unit};
 
 assert_eq!(15000, Byte::from_u64(15000).as_u64());
 assert_eq!(15000, Byte::from_u64_with_unit(15, Unit::KB).unwrap().as_u64());
+# }
 ```
 
 You can also parse a string to create a `Byte` instance.
 
 ```rust
+# #[cfg(feature = "byte")]
+# {
 use byte_unit::Byte;
 
 assert_eq!(50840000, Byte::parse_str("50.84 MB", true).unwrap().as_u64());
+# }
 ```
 
 A `Byte` instance can be formatted to string precisely. For more detailed usage, please refer to the implementation documentation of `Display::fmt` for `Byte`.
 
 ```rust
+# #[cfg(feature = "byte")]
+# {
 use byte_unit::Byte;
 
 let byte = Byte::from_u64(15500);
@@ -62,6 +70,7 @@ assert_eq!("15500", byte.to_string());
 
 assert_eq!("15.5 KB", format!("{byte:#}"));
 assert_eq!("15500 B", format!("{byte:#.0}"));
+# }
 ```
 
 #### Arithmetic
@@ -69,6 +78,8 @@ assert_eq!("15500 B", format!("{byte:#.0}"));
 There are `add`, `subtract`, `multiply`, and `divide` methods.
 
 ```rust
+# #[cfg(feature = "byte")]
+# {
 use byte_unit::Byte;
 
 let a = Byte::from_u64(15500);
@@ -79,6 +90,7 @@ assert_eq!(15000, a.subtract(b).unwrap().as_u64());
 
 assert_eq!(31000, a.multiply(2).unwrap().as_u64());
 assert_eq!(3100, a.divide(5).unwrap().as_u64());
+# }
 ```
 
 #### Find out an appropriate Unit
@@ -86,6 +98,8 @@ assert_eq!(3100, a.divide(5).unwrap().as_u64());
 The `get_exact_unit` and `get_recoverable_unit` methods is useful if you want to find out a unit that is appropriate for a `Byte` instance.
 
 ```rust
+# #[cfg(feature = "byte")]
+# {
 use byte_unit::{Byte, Unit};
 
 let byte = Byte::from_u64(50840000);
@@ -93,6 +107,7 @@ let byte = Byte::from_u64(50840000);
 assert_eq!((50840, Unit::KB), byte.get_exact_unit(false));
 assert_eq!((50.84f64.try_into().unwrap(), Unit::MB), byte.get_recoverable_unit(false, 2));
 assert_eq!((50840.into(), Unit::KB), byte.get_recoverable_unit(false, 0));
+# }
 ```
 
 #### AdaptedByte
@@ -104,6 +119,8 @@ To change the unit of a `Byte` instance, you can use the `get_adjusted_unit` met
 An `AdaptedByte` instance can be formatted to string. For more detailed usage, please refer to the implementation documentation of `Display::fmt` for `AdaptedByte`.
 
 ```rust
+# #[cfg(feature = "byte")]
+# {
 use byte_unit::{Byte, Unit};
 
 let byte = Byte::parse_str("123KiB", true).unwrap();
@@ -112,11 +129,14 @@ let adjusted_byte = byte.get_adjusted_unit(Unit::KB);
 
 assert_eq!("125.952 KB", adjusted_byte.to_string());
 assert_eq!("125.95 KB", format!("{adjusted_byte:.2}"));
+# }
 ```
 
 The `get_appropriate_unit` method can be used to automatically find a appropriate unit for creating an `AdaptedByte` instance.
 
 ```rust
+# #[cfg(feature = "byte")]
+# {
 use byte_unit::{Byte, Unit, UnitType};
 
 let byte = Byte::from_u64(1500000);
@@ -124,6 +144,7 @@ let byte = Byte::from_u64(1500000);
 let adjusted_byte = byte.get_appropriate_unit(UnitType::Binary);
 
 assert_eq!("1.43 MiB", format!("{adjusted_byte:.2}"));
+# }
 ```
 
 ### Bit
