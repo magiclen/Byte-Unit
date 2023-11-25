@@ -110,13 +110,13 @@ assert_eq!((50840.into(), Unit::KB), byte.get_recoverable_unit(false, 0));
 # }
 ```
 
-#### AdaptedByte
+#### AdjustedByte
 
-The struct `AdaptedByte` can be used for roughly representing a size of bytes with a unit.
+The struct `AdjustedByte` can be used for roughly representing a size of bytes with a unit.
 
 To change the unit of a `Byte` instance, you can use the `get_adjusted_unit` method.
 
-An `AdaptedByte` instance can be formatted to string. For more detailed usage, please refer to the implementation documentation of `Display::fmt` for `AdaptedByte`.
+An `AdjustedByte` instance can be formatted to string. For more detailed usage, please refer to the implementation documentation of `Display::fmt` for `AdjustedByte`.
 
 ```rust
 # #[cfg(feature = "byte")]
@@ -132,7 +132,7 @@ assert_eq!("125.95 KB", format!("{adjusted_byte:.2}"));
 # }
 ```
 
-The `get_appropriate_unit` method can be used to automatically find a appropriate unit for creating an `AdaptedByte` instance.
+The `get_appropriate_unit` method can be used to automatically find an appropriate unit for creating an `AdjustedByte` instance.
 
 ```rust
 # #[cfg(feature = "byte")]
