@@ -17,76 +17,76 @@ use crate::{
 };
 
 #[cfg(feature = "u128")]
-const RONNABYTE: u128 = 1_000_000_000_000_000_000_000_000_000; // RB
+const RONNABIT: u128 = 1_000_000_000_000_000_000_000_000_000; // RB
 
 #[cfg(feature = "u128")]
 #[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, Default)]
-/// Representing the size in bytes.
-pub struct Byte(u128);
+/// Representing the size in bits.
+pub struct Bit(u128);
 
 #[cfg(not(feature = "u128"))]
 #[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq, Hash, Default)]
-/// Representing the size in bytes.
-pub struct Byte(u64);
+/// Representing the size in bits.
+pub struct Bit(u64);
 
-impl Display for Byte {
+impl Display for Bit {
     /// Formats the value using the given formatter.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_u64_with_unit(1555, Unit::KB).unwrap();
+    /// let bit = Bit::from_u64_with_unit(1555, Unit::Kbit).unwrap();
     ///
-    /// assert_eq!("1555000", byte.to_string());
+    /// assert_eq!("1555000", bit.to_string());
     /// ```
     ///
     /// ```
-    /// use byte_unit::{Byte, UnitType};
+    /// use byte_unit::{Bit, UnitType};
     ///
-    /// let byte_based_2 = Byte::from_u64(10240);
-    /// let byte_based_10 = Byte::from_u64(10000);
+    /// let bit_based_2 = Bit::from_u64(10240);
+    /// let bit_based_10 = Bit::from_u64(10000);
     ///
-    /// assert_eq!("10240", format!("{byte_based_2}"));
-    /// assert_eq!("10000", format!("{byte_based_10}"));
+    /// assert_eq!("10240", format!("{bit_based_2}"));
+    /// assert_eq!("10000", format!("{bit_based_10}"));
     ///
     /// // with an exact unit
-    /// assert_eq!("10 KiB", format!("{byte_based_2:#}"));
-    /// assert_eq!("10 KB", format!("{byte_based_10:#}"));
+    /// assert_eq!("10 Kib", format!("{bit_based_2:#}"));
+    /// assert_eq!("10 Kb", format!("{bit_based_10:#}"));
     ///
     /// // with an exact unit, no spaces between the value and the unit
-    /// assert_eq!("10KiB", format!("{byte_based_2:-#}"));
-    /// assert_eq!("10KB", format!("{byte_based_10:-#}"));
+    /// assert_eq!("10Kib", format!("{bit_based_2:-#}"));
+    /// assert_eq!("10Kb", format!("{bit_based_10:-#}"));
     ///
     /// // with a width, left alignment
-    /// assert_eq!("10     KiB", format!("{byte_based_2:#10}"));
-    /// assert_eq!("10      KB", format!("{byte_based_10:#10}"));
+    /// assert_eq!("10     Kib", format!("{bit_based_2:#10}"));
+    /// assert_eq!("10      Kb", format!("{bit_based_10:#10}"));
     ///
     /// // with a width, right alignment
-    /// assert_eq!("    10 KiB", format!("{byte_based_2:>#10}"));
-    /// assert_eq!("     10 KB", format!("{byte_based_10:>#10}"));
+    /// assert_eq!("    10 Kib", format!("{bit_based_2:>#10}"));
+    /// assert_eq!("     10 Kb", format!("{bit_based_10:>#10}"));
     ///
     /// // with a width, right alignment, more spaces between the value and the unit
-    /// assert_eq!("    10 KiB", format!("{byte_based_2:>+#10}"));
-    /// assert_eq!("    10  KB", format!("{byte_based_10:>+#10}"));
+    /// assert_eq!("    10 Kib", format!("{bit_based_2:>+#10}"));
+    /// assert_eq!("    10  Kb", format!("{bit_based_10:>+#10}"));
     /// ```
     ///
     /// ```
-    /// use byte_unit::{Byte, UnitType};
+    /// use byte_unit::{Bit, UnitType};
     ///
-    /// let byte = Byte::from_u64(3211776);
+    /// let bit = Bit::from_u64(3211776);
     ///
-    /// assert_eq!("3211776", format!("{byte}"));
+    /// assert_eq!("3211776", format!("{bit}"));
     ///
     /// // with a unit, still precisely
-    /// assert_eq!("3136.5 KiB", format!("{byte:#}"));
+    /// assert_eq!("3136.5 Kib", format!("{bit:#}"));
     ///
     /// // with a unit and a larger precision (default is 3), still precisely
-    /// assert_eq!("3.211776 MB", format!("{byte:#.6}"));
+    /// assert_eq!("3.211776 Mb", format!("{bit:#.6}"));
     ///
     /// // with a unit and a smaller precision (default is 3), still precisely
-    /// assert_eq!("3211776 B", format!("{byte:#.0}"));
+    /// assert_eq!("3211776 b", format!("{bit:#.0}"));
     /// ```
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         if f.alternate() {
@@ -136,15 +136,15 @@ impl Display for Byte {
     }
 }
 
-/// Associated functions for building `Byte` instances.
-impl Byte {
-    /// Create a new `Byte` instance from a size in bytes.
+/// Associated functions for building `Bit` instances.
+impl Bit {
+    /// Create a new `Bit` instance from a size in bits.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use byte_unit::Byte;
-    /// let byte = Byte::from_u128(15000000).unwrap(); // 15 MB
+    /// # use byte_unit::Bit;
+    /// let bit = Bit::from_u128(15000000).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
@@ -154,8 +154,8 @@ impl Byte {
     pub const fn from_u128(size: u128) -> Option<Self> {
         #[cfg(feature = "u128")]
         {
-            if size < RONNABYTE {
-                Some(Byte(size))
+            if size < RONNABIT {
+                Some(Bit(size))
             } else {
                 None
             }
@@ -164,20 +164,20 @@ impl Byte {
         #[cfg(not(feature = "u128"))]
         {
             if size <= u64::MAX as u128 {
-                Some(Byte(size as u64))
+                Some(Bit(size as u64))
             } else {
                 None
             }
         }
     }
 
-    /// Create a new `Byte` instance from a size in bytes.
+    /// Create a new `Bit` instance from a size in bits.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use byte_unit::Byte;
-    /// let byte = unsafe { Byte::from_u128_unsafe(15000000) }; // 15 MB
+    /// # use byte_unit::Bit;
+    /// let bit = unsafe { Bit::from_u128_unsafe(15000000) }; // 15 Mb
     /// ```
     ///
     /// # Safety
@@ -186,43 +186,43 @@ impl Byte {
     pub const unsafe fn from_u128_unsafe(size: u128) -> Self {
         #[cfg(feature = "u128")]
         {
-            Byte(size)
+            Bit(size)
         }
 
         #[cfg(not(feature = "u128"))]
         {
-            Byte(size as u64)
+            Bit(size as u64)
         }
     }
 
-    /// Create a new `Byte` instance from a size in bytes.
+    /// Create a new `Bit` instance from a size in bits.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use byte_unit::Byte;
-    /// let byte = Byte::from_u64(15000000); // 15 MB
+    /// # use byte_unit::Bit;
+    /// let bit = Bit::from_u64(15000000); // 15 Mb
     /// ```
     #[inline]
     pub const fn from_u64(size: u64) -> Self {
         #[cfg(feature = "u128")]
         {
-            Byte(size as u128)
+            Bit(size as u128)
         }
 
         #[cfg(not(feature = "u128"))]
         {
-            Byte(size)
+            Bit(size)
         }
     }
 
-    /// Create a new `Byte` instance from a size im bytes.
+    /// Create a new `Bit` instance from a size im bits.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use byte_unit::Byte;
-    /// let byte = Byte::from_f64(15000000.0).unwrap(); // 15 MB
+    /// # use byte_unit::Bit;
+    /// let bit = Bit::from_f64(15000000.0).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
@@ -236,8 +236,8 @@ impl Byte {
             {
                 let size = ceil_f64(size) as u128;
 
-                if size < RONNABYTE {
-                    Some(Byte(size))
+                if size < RONNABIT {
+                    Some(Bit(size))
                 } else {
                     None
                 }
@@ -248,7 +248,7 @@ impl Byte {
                 let size = ceil_f64(size) as u64;
 
                 if size < u64::MAX {
-                    Some(Byte(size))
+                    Some(Bit(size))
                 } else {
                     None
                 }
@@ -258,13 +258,13 @@ impl Byte {
         }
     }
 
-    /// Create a new `Byte` instance from a size in bytes.
+    /// Create a new `Bit` instance from a size in bits.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use byte_unit::Byte;
-    /// let byte = Byte::from_f32(15000000.0).unwrap(); // 15 MB
+    /// # use byte_unit::Bit;
+    /// let bit = Bit::from_f32(15000000.0).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
@@ -278,8 +278,8 @@ impl Byte {
             {
                 let size = ceil_f32(size) as u128;
 
-                if size < RONNABYTE {
-                    Some(Byte(size))
+                if size < RONNABIT {
+                    Some(Bit(size))
                 } else {
                     None
                 }
@@ -290,7 +290,7 @@ impl Byte {
                 let size = ceil_f32(size) as u64;
 
                 if size < u64::MAX {
-                    Some(Byte(size))
+                    Some(Bit(size))
                 } else {
                     None
                 }
@@ -300,13 +300,13 @@ impl Byte {
         }
     }
 
-    /// Create a new `Byte` instance from a size in bytes.
+    /// Create a new `Bit` instance from a size in bits.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use byte_unit::Byte;
-    /// let byte = Byte::from_i128(15000000).unwrap(); // 15 MB
+    /// # use byte_unit::Bit;
+    /// let bit = Bit::from_i128(15000000).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
@@ -321,13 +321,13 @@ impl Byte {
         }
     }
 
-    /// Create a new `Byte` instance from a size in bytes.
+    /// Create a new `Bit` instance from a size in bits.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use byte_unit::Byte;
-    /// let byte = Byte::from_i64(15000000).unwrap(); // 15 MB
+    /// # use byte_unit::Bit;
+    /// let bit = Bit::from_i64(15000000).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
@@ -343,35 +343,27 @@ impl Byte {
     }
 }
 
-/// Associated functions for building `Byte` instances (with `Unit`).
-impl Byte {
-    /// Create a new `Byte` instance from a size of bytes with a unit.
+/// Associated functions for building `Bit` instances (with `Unit`).
+impl Bit {
+    /// Create a new `Bit` instance from a size of bits with a unit.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_u128_with_unit(15, Unit::MB).unwrap(); // 15 MB
+    /// let bit = Bit::from_u128_with_unit(15, Unit::Mbit).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
     ///
-    /// * If the calculated byte is too large, this function will return `None`.
-    /// * If the input **unit** is `Bit`, the calculated byte will be rounded up.
+    /// * If the calculated bit is too large, this function will return `None`.
     #[inline]
     pub const fn from_u128_with_unit(size: u128, unit: Unit) -> Option<Self> {
         let v = {
             match unit {
-                Unit::Bit => {
-                    if size & 11 > 0 {
-                        (size >> 3) + 1
-                    } else {
-                        size >> 3
-                    }
-                },
-                Unit::B => size,
-                _ => match size.checked_mul(unit.as_bytes_u128()) {
+                Unit::Bit => size,
+                _ => match size.checked_mul(unit.as_bits_u128()) {
                     Some(v) => v,
                     None => return None,
                 },
@@ -381,20 +373,20 @@ impl Byte {
         Self::from_u128(v)
     }
 
-    /// Create a new `Byte` instance from a size of bytes with a unit.
+    /// Create a new `Bit` instance from a size of bits with a unit.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_u64_with_unit(15, Unit::MB).unwrap(); // 15 MB
+    /// let bit = Bit::from_u64_with_unit(15, Unit::Mbit).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
     ///
-    /// * If the calculated byte is too large, this function will return `None`.
-    /// * If the input **unit** is `Bit`, the calculated byte will be rounded up.
+    /// * If the calculated bit is too large, this function will return `None`.
+    /// * If the input **unit** is `Bit`, the calculated bit will be rounded up.
     #[inline]
     pub const fn from_u64_with_unit(size: u64, unit: Unit) -> Option<Self> {
         #[cfg(feature = "u128")]
@@ -406,15 +398,8 @@ impl Byte {
         {
             let v = {
                 match unit {
-                    Unit::Bit => {
-                        if size & 11 > 0 {
-                            (size >> 3) + 1
-                        } else {
-                            size >> 3
-                        }
-                    },
-                    Unit::B => size,
-                    _ => match size.checked_mul(unit.as_bytes_u64()) {
+                    Unit::Bit => size,
+                    _ => match size.checked_mul(unit.as_bits_u64()) {
                         Some(v) => v,
                         None => return None,
                     },
@@ -425,20 +410,20 @@ impl Byte {
         }
     }
 
-    /// Create a new `Byte` instance from a size of bytes with a unit.
+    /// Create a new `Bit` instance from a size of bits with a unit.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_f64_with_unit(15.0, Unit::MB).unwrap(); // 15 MB
+    /// let bit = Bit::from_f64_with_unit(15.0, Unit::Mbit).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
     ///
-    /// * If the calculated byte is too large or not greater than or equal to **0**, this function will return `None`.
-    /// * The calculated byte will be rounded up.
+    /// * If the calculated bit is too large or not greater than or equal to **0**, this function will return `None`.
+    /// * The calculated bit will be rounded up.
     #[inline]
     pub fn from_f64_with_unit(size: f64, unit: Unit) -> Option<Self> {
         match Decimal::from_f64(size) {
@@ -447,20 +432,20 @@ impl Byte {
         }
     }
 
-    /// Create a new `Byte` instance from a size of bytes with a unit.
+    /// Create a new `Bit` instance from a size of bits with a unit.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_f32_with_unit(15.0, Unit::MB).unwrap(); // 15 MB
+    /// let bit = Bit::from_f32_with_unit(15.0, Unit::Mbit).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
     ///
-    /// * If the calculated byte is too large or not greater than or equal to **0**, this function will return `None`.
-    /// * The calculated byte will be rounded up.
+    /// * If the calculated bit is too large or not greater than or equal to **0**, this function will return `None`.
+    /// * The calculated bit will be rounded up.
     #[inline]
     pub fn from_f32_with_unit(size: f32, unit: Unit) -> Option<Self> {
         match Decimal::from_f32(size) {
@@ -469,20 +454,19 @@ impl Byte {
         }
     }
 
-    /// Create a new `Byte` instance from a size of bytes with a unit.
+    /// Create a new `Bit` instance from a size of bits with a unit.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_i128_with_unit(15, Unit::MB).unwrap(); // 15 MB
+    /// let bit = Bit::from_i128_with_unit(15, Unit::Mibit).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
     ///
-    /// * If the calculated byte is too large or negative, this function will return `None`.
-    /// * The calculated byte will be rounded up.
+    /// * If the calculated bit is too large or negative, this function will return `None`.
     #[inline]
     pub const fn from_i128_with_unit(size: i128, unit: Unit) -> Option<Self> {
         if size >= 0 {
@@ -492,20 +476,19 @@ impl Byte {
         }
     }
 
-    /// Create a new `Byte` instance from a size of bytes with a unit.
+    /// Create a new `Bit` instance from a size of bits with a unit.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_i64_with_unit(15, Unit::MB).unwrap(); // 15 MB
+    /// let bit = Bit::from_i64_with_unit(15, Unit::Mbit).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
     ///
-    /// * If the calculated byte is too large or negative, this function will return `None`.
-    /// * The calculated byte will be rounded up.
+    /// * If the calculated bit is too large or negative, this function will return `None`.
     #[inline]
     pub const fn from_i64_with_unit(size: i64, unit: Unit) -> Option<Self> {
         if size >= 0 {
@@ -516,30 +499,30 @@ impl Byte {
     }
 }
 
-/// Methods for converting a `Byte` instance into a primitive integer.
-impl Byte {
-    /// Retrieve the byte represented by this `Byte` instance.
+/// Methods for converting a `Bit` instance into a primitive integer.
+impl Bit {
+    /// Retrieve the bit represented by this `Bit` instance.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::Byte;
+    /// use byte_unit::Bit;
     ///
-    /// let byte = Byte::parse_str("123Kib", true).unwrap();
+    /// let bit = Bit::parse_str("123KiB").unwrap();
     ///
-    /// let result = byte.as_u128();
+    /// let result = bit.as_u128();
+    ///
+    /// assert_eq!(1007616, result);
+    /// ```
+    ///
+    /// ```
+    /// use byte_unit::Bit;
+    ///
+    /// let bit = Bit::parse_str("123Kib").unwrap();
+    ///
+    /// let result = bit.as_u128();
     ///
     /// assert_eq!(125952, result);
-    /// ```
-    ///
-    /// ```
-    /// use byte_unit::Byte;
-    ///
-    /// let byte = Byte::parse_str("123Kib", false).unwrap();
-    ///
-    /// let result = byte.as_u128();
-    ///
-    /// assert_eq!(15744, result);
     /// ```
     #[inline]
     pub const fn as_u128(self) -> u128 {
@@ -554,16 +537,16 @@ impl Byte {
         }
     }
 
-    /// Retrieve the byte represented by this `Byte` instance. When the `u128` feature is enabled, if the byte is actually greater than **2<sup>64</sup> - 1**, it will return **2<sup>64</sup> - 1**.
+    /// Retrieve the bit represented by this `Bit` instance. When the `u128` feature is enabled, if the bit is actually greater than **2<sup>64</sup> - 1**, it will return **2<sup>64</sup> - 1**.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::Byte;
+    /// use byte_unit::Bit;
     ///
-    /// let byte = Byte::parse_str("1kb", true).unwrap();
+    /// let bit = Bit::parse_str("1kb").unwrap();
     ///
-    /// let result = byte.as_u64();
+    /// let result = bit.as_u64();
     ///
     /// assert_eq!(1000, result);
     /// ```
@@ -571,11 +554,11 @@ impl Byte {
     /// ```
     /// # #[cfg(feature = "u128")]
     /// # {
-    /// use byte_unit::Byte;
+    /// use byte_unit::Bit;
     ///
-    /// let byte = Byte::parse_str("1zb", true).unwrap();
+    /// let bit = Bit::parse_str("1zb").unwrap();
     ///
-    /// let result = byte.as_u64();
+    /// let result = bit.as_u64();
     ///
     /// assert_eq!(u64::MAX, result);
     /// # }
@@ -597,16 +580,16 @@ impl Byte {
         }
     }
 
-    /// Retrieve the byte represented by this `Byte` instance.
+    /// Retrieve the bit represented by this `Bit` instance.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::Byte;
+    /// use byte_unit::Bit;
     ///
-    /// let byte = Byte::parse_str("1kb", true).unwrap();
+    /// let bit = Bit::parse_str("1k").unwrap();
     ///
-    /// let result = byte.as_u64_checked();
+    /// let result = bit.as_u64_checked();
     ///
     /// assert_eq!(Some(1000), result);
     /// ```
@@ -614,11 +597,11 @@ impl Byte {
     /// ```
     /// # #[cfg(feature = "u128")]
     /// # {
-    /// use byte_unit::Byte;
+    /// use byte_unit::Bit;
     ///
-    /// let byte = Byte::parse_str("1zb", true).unwrap();
+    /// let bit = Bit::parse_str("1zb").unwrap();
     ///
-    /// let result = byte.as_u64_checked();
+    /// let result = bit.as_u64_checked();
     ///
     /// assert_eq!(None, result);
     /// # }
@@ -642,55 +625,55 @@ impl Byte {
 }
 
 /// Methods for calculation.
-impl Byte {
-    /// Add another `Byte` instance.
+impl Bit {
+    /// Add another `Bit` instance.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::Byte;
+    /// use byte_unit::Bit;
     ///
-    /// let byte_1 = Byte::from_u64(1024);
-    /// let byte_2 = Byte::from_u64(512);
+    /// let bit_1 = Bit::from_u64(1024);
+    /// let bit_2 = Bit::from_u64(512);
     ///
-    /// let byte = byte_1.add(byte_2).unwrap();
+    /// let bit = bit_1.add(bit_2).unwrap();
     ///
-    /// assert_eq!(1536, byte.as_u64());
+    /// assert_eq!(1536, bit.as_u64());
     /// ```
     ///
     /// # Points to Note
     ///
-    /// * If the calculated byte is too large, this function will return `None`.
+    /// * If the calculated bit is too large, this function will return `None`.
     #[inline]
-    pub const fn add(self, rhs: Byte) -> Option<Byte> {
+    pub const fn add(self, rhs: Bit) -> Option<Bit> {
         match self.0.checked_add(rhs.0) {
-            Some(v) => Some(Byte(v)),
+            Some(v) => Some(Bit(v)),
             None => None,
         }
     }
 
-    /// Subtract another `Byte` instance.
+    /// Subtract another `Bit` instance.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::Byte;
+    /// use byte_unit::Bit;
     ///
-    /// let byte_1 = Byte::from_u64(1024);
-    /// let byte_2 = Byte::from_u64(512);
+    /// let bit_1 = Bit::from_u64(1024);
+    /// let bit_2 = Bit::from_u64(512);
     ///
-    /// let byte = byte_1.subtract(byte_2).unwrap();
+    /// let bit = bit_1.subtract(bit_2).unwrap();
     ///
-    /// assert_eq!(512, byte.as_u64());
+    /// assert_eq!(512, bit.as_u64());
     /// ```
     ///
     /// # Points to Note
     ///
-    /// * If the right-hand side is bigger then this `Byte` instance, this function will return `None`.
+    /// * If the right-hand side is bigger then this `Bit` instance, this function will return `None`.
     #[inline]
-    pub const fn subtract(self, rhs: Byte) -> Option<Byte> {
+    pub const fn subtract(self, rhs: Bit) -> Option<Bit> {
         match self.0.checked_sub(rhs.0) {
-            Some(v) => Some(Byte(v)),
+            Some(v) => Some(Bit(v)),
             None => None,
         }
     }
@@ -700,25 +683,25 @@ impl Byte {
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::Byte;
+    /// use byte_unit::Bit;
     ///
     /// let count = 100;
-    /// let byte = Byte::from_u64(1024);
+    /// let bit = Bit::from_u64(1024);
     ///
-    /// let total_byte = byte.multiply(100).unwrap();
+    /// let total_bit = bit.multiply(100).unwrap();
     ///
-    /// assert_eq!(102400, total_byte.as_u64());
+    /// assert_eq!(102400, total_bit.as_u64());
     /// ```
     ///
     /// # Points to Note
     ///
-    /// * If the calculated byte is too large, this function will return `None`.
+    /// * If the calculated bit is too large, this function will return `None`.
     #[inline]
-    pub const fn multiply(self, rhs: usize) -> Option<Byte> {
+    pub const fn multiply(self, rhs: usize) -> Option<Bit> {
         #[cfg(feature = "u128")]
         {
             match self.0.checked_mul(rhs as u128) {
-                Some(v) => Some(Byte(v)),
+                Some(v) => Some(Bit(v)),
                 None => None,
             }
         }
@@ -733,7 +716,7 @@ impl Byte {
             }
 
             match self.0.checked_mul(rhs as u64) {
-                Some(v) => Some(Byte(v)),
+                Some(v) => Some(Bit(v)),
                 None => None,
             }
         }
@@ -744,14 +727,14 @@ impl Byte {
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::Byte;
+    /// use byte_unit::Bit;
     ///
     /// let count = 100;
-    /// let byte = Byte::from_u64(1024);
+    /// let bit = Bit::from_u64(1024);
     ///
-    /// let total_byte = byte.divide(100).unwrap();
+    /// let total_bit = bit.divide(100).unwrap();
     ///
-    /// assert_eq!(10, total_byte.as_u64());
+    /// assert_eq!(10, total_bit.as_u64());
     /// ```
     ///
     /// # Points to Note
@@ -759,11 +742,11 @@ impl Byte {
     /// * If the input right-hand side is zero, this function will return `None`.
     /// * The result will be rounded down.
     #[inline]
-    pub const fn divide(self, rhs: usize) -> Option<Byte> {
+    pub const fn divide(self, rhs: usize) -> Option<Bit> {
         #[cfg(feature = "u128")]
         {
             match self.0.checked_div(rhs as u128) {
-                Some(v) => Some(Byte(v)),
+                Some(v) => Some(Bit(v)),
                 None => None,
             }
         }
@@ -778,70 +761,70 @@ impl Byte {
             }
 
             match self.0.checked_div(rhs as u64) {
-                Some(v) => Some(Byte(v)),
+                Some(v) => Some(Bit(v)),
                 None => None,
             }
         }
     }
 
     #[inline]
-    pub(crate) const fn div_8(self) -> Byte {
-        Byte(self.0 / 8)
+    pub(crate) const fn mul_8(self) -> Bit {
+        Bit(self.0 * 8)
     }
 }
 
 /// Methods for finding an unit.
-impl Byte {
-    /// Obtain the largest unit which is the greatest factor of this `Byte` instance.
+impl Bit {
+    /// Obtain the largest unit which is the greatest factor of this `Bit` instance.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_u64(3145728);
+    /// let bit = Bit::from_u64(3145728);
     ///
-    /// let (n, unit) = byte.get_exact_unit(true);
+    /// let (n, unit) = bit.get_exact_unit(true);
     ///
     /// assert_eq!(3, n);
-    /// assert_eq!(Unit::MiB, unit);
+    /// assert_eq!(Unit::Mibit, unit);
     /// ```
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_u64(375000);
+    /// let bit = Bit::from_u64(24000000);
     ///
-    /// let (n, unit) = byte.get_exact_unit(true);
+    /// let (n, unit) = bit.get_exact_unit(true);
     ///
     /// assert_eq!(3, n);
+    /// assert_eq!(Unit::MB, unit);
+    /// ```
+    ///
+    /// ```
+    /// use byte_unit::{Bit, Unit};
+    ///
+    /// let bit = Bit::from_u64(24000000);
+    ///
+    /// let (n, unit) = bit.get_exact_unit(false);
+    ///
+    /// assert_eq!(24, n);
     /// assert_eq!(Unit::Mbit, unit);
     /// ```
-    ///
-    /// ```
-    /// use byte_unit::{Byte, Unit};
-    ///
-    /// let byte = Byte::from_u64(375000);
-    ///
-    /// let (n, unit) = byte.get_exact_unit(false);
-    ///
-    /// assert_eq!(375, n);
-    /// assert_eq!(Unit::KB, unit);
-    /// ```
     #[inline]
-    pub const fn get_exact_unit(self, allow_in_bits: bool) -> (u128, Unit) {
-        let bytes_v = self.as_u128();
+    pub const fn get_exact_unit(self, allow_in_bytes: bool) -> (u128, Unit) {
+        let bits_v = self.as_u128();
 
-        let a = if allow_in_bits { Unit::get_multiples() } else { Unit::get_multiples_bytes() };
+        let a = if allow_in_bytes { Unit::get_multiples() } else { Unit::get_multiples_bits() };
         let mut i = a.len() - 1;
 
         loop {
             let unit = a[i];
 
-            let unit_v = unit.as_bytes_u128();
+            let unit_v = unit.as_bits_u128();
 
-            if bytes_v >= unit_v && bytes_v % unit_v == 0 {
-                return (bytes_v / unit_v, unit);
+            if bits_v >= unit_v && bits_v % unit_v == 0 {
+                return (bits_v / unit_v, unit);
             }
 
             if i == 0 {
@@ -851,6 +834,6 @@ impl Byte {
             i -= 1;
         }
 
-        (bytes_v, Unit::B)
+        (bits_v, Unit::Bit)
     }
 }

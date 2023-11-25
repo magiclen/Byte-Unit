@@ -1,21 +1,19 @@
 use rust_decimal::prelude::*;
 
-use super::Byte;
+use super::Bit;
 use crate::{common::is_zero_remainder_decimal, Unit};
 
-const DECIMAL_EIGHT: Decimal = Decimal::from_parts(8, 0, 0, false, 0);
-
-/// Associated functions for building `Byte` instances using `Decimal`.
-impl Byte {
-    /// Create a new `Byte` instance from a size in bytes.
+/// Associated functions for building `Bit` instances using `Decimal`.
+impl Bit {
+    /// Create a new `Bit` instance from a size in bits.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::Byte;
+    /// use byte_unit::Bit;
     /// use rust_decimal::Decimal;
     ///
-    /// let byte = Byte::from_decimal(Decimal::from(15000000u64)).unwrap(); // 15 MB
+    /// let bit = Bit::from_decimal(Decimal::from(15000000u64)).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
@@ -47,30 +45,29 @@ impl Byte {
     }
 }
 
-/// Associated functions for building `Byte` instances using `Decimal` (with `Unit`).
-impl Byte {
-    /// Create a new `Byte` instance from a size of bytes with a unit.
+/// Associated functions for building `Bit` instances using `Decimal` (with `Unit`).
+impl Bit {
+    /// Create a new `Bit` instance from a size of bits with a unit.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     /// use rust_decimal::Decimal;
     ///
-    /// let byte = Byte::from_decimal_with_unit(Decimal::from(15u64), Unit::MB).unwrap(); // 15 MB
+    /// let bit = Bit::from_decimal_with_unit(Decimal::from(15u64), Unit::Mbit).unwrap(); // 15 Mb
     /// ```
     ///
     /// # Points to Note
     ///
-    /// * If the calculated byte is too large or not greater than or equal to **0**, this function will return `None`.
-    /// * The calculated byte will be rounded up.
+    /// * If the calculated bit is too large or not greater than or equal to **0**, this function will return `None`.
+    /// * The calculated bit will be rounded up.
     #[inline]
     pub fn from_decimal_with_unit(size: Decimal, unit: Unit) -> Option<Self> {
         let v = {
             match unit {
-                Unit::Bit => (size / DECIMAL_EIGHT).ceil(),
-                Unit::B => size,
-                _ => match size.checked_mul(Decimal::from(unit.as_bytes_u128())) {
+                Unit::Bit => size,
+                _ => match size.checked_mul(Decimal::from(unit.as_bits_u128())) {
                     Some(v) => v,
                     None => return None,
                 },
@@ -82,41 +79,41 @@ impl Byte {
 }
 
 /// Methods for finding an unit using `Decimal`.
-impl Byte {
-    /// Find the appropriate unit and value that can be used to recover back to this `Byte` precisely.
+impl Bit {
+    /// Find the appropriate unit and value that can be used to recover back to this `Bit` precisely.
     ///
     /// # Examples
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_u64(3670016);
+    /// let bit = Bit::from_u64(3670016);
     ///
     /// assert_eq!(
-    ///     (3.5f64.try_into().unwrap(), Unit::MiB),
-    ///     byte.get_recoverable_unit(false, 3)
+    ///     (3.5f64.try_into().unwrap(), Unit::Mibit),
+    ///     bit.get_recoverable_unit(false, 3)
     /// );
     /// ```
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_u64(437500);
+    /// let bit = Bit::from_u64(28000000);
     ///
     /// assert_eq!(
-    ///     (3.5f64.try_into().unwrap(), Unit::Mbit),
-    ///     byte.get_recoverable_unit(true, 3)
+    ///     (3.5f64.try_into().unwrap(), Unit::MB),
+    ///     bit.get_recoverable_unit(true, 3)
     /// );
     /// ```
     ///
     /// ```
-    /// use byte_unit::{Byte, Unit};
+    /// use byte_unit::{Bit, Unit};
     ///
-    /// let byte = Byte::from_u64(437500);
+    /// let bit = Bit::from_u64(437500);
     ///
     /// assert_eq!(
-    ///     (437.5f64.try_into().unwrap(), Unit::KB),
-    ///     byte.get_recoverable_unit(false, 3)
+    ///     (437.5f64.try_into().unwrap(), Unit::Kbit),
+    ///     bit.get_recoverable_unit(false, 3)
     /// );
     /// ```
     ///
@@ -129,10 +126,10 @@ impl Byte {
         allow_in_bits: bool,
         mut precision: usize,
     ) -> (Decimal, Unit) {
-        let bytes_v = self.as_u128();
-        let bytes_vd = Decimal::from(bytes_v);
+        let bits_v = self.as_u128();
+        let bits_vd = Decimal::from(bits_v);
 
-        let a = if allow_in_bits { Unit::get_multiples() } else { Unit::get_multiples_bytes() };
+        let a = if allow_in_bits { Unit::get_multiples() } else { Unit::get_multiples_bits() };
         let mut i = a.len() - 1;
 
         if precision >= 28 {
@@ -142,12 +139,12 @@ impl Byte {
         loop {
             let unit = a[i];
 
-            let unit_v = unit.as_bytes_u128();
+            let unit_v = unit.as_bits_u128();
 
-            if bytes_v >= unit_v {
+            if bits_v >= unit_v {
                 let unit_vd = Decimal::from(unit_v);
 
-                if let Some(quotient) = is_zero_remainder_decimal(bytes_vd, unit_vd, precision) {
+                if let Some(quotient) = is_zero_remainder_decimal(bits_vd, unit_vd, precision) {
                     return (quotient, unit);
                 }
             }
@@ -159,6 +156,6 @@ impl Byte {
             i -= 1;
         }
 
-        (bytes_vd, Unit::B)
+        (bits_vd, Unit::Bit)
     }
 }

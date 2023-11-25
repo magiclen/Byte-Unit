@@ -3,9 +3,6 @@ use core::str::Bytes;
 #[cfg(any(feature = "byte", feature = "bit"))]
 use rust_decimal::prelude::*;
 
-#[cfg(any(feature = "byte", feature = "bit"))]
-pub(crate) const DECIMAL_EIGHT: Decimal = Decimal::from_parts(8, 0, 0, false, 0);
-
 /// # Safety
 /// Make sure the input is valid on your own.
 pub(crate) unsafe fn get_char_from_bytes(e: u8, mut bytes: Bytes) -> char {

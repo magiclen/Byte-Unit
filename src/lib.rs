@@ -32,7 +32,7 @@ assert_eq!(Unit::Kbit, Unit::parse_str("Kb", false, true).unwrap());
 
 ### Byte
 
-The struct `Byte` can be used for representing a size in bytes.
+The `Byte` struct can be used for representing a size in bytes.
 
 The `from_*` associated functions can be used to create a `Byte` instance from different data types.  The `as_*` methods can retrieve the size as a primitive type.
 
@@ -112,7 +112,7 @@ assert_eq!((50840.into(), Unit::KB), byte.get_recoverable_unit(false, 0));
 
 #### AdjustedByte
 
-The struct `AdjustedByte` can be used for roughly representing a size of bytes with a unit.
+The `AdjustedByte` struct can be used for roughly representing a size of bytes with a unit.
 
 To change the unit of a `Byte` instance, you can use the `get_adjusted_unit` method.
 
@@ -149,11 +149,25 @@ assert_eq!("1.43 MiB", format!("{adjusted_byte:.2}"));
 
 ### Bit
 
-The struct `Bit` can be used for representing a size in bits.
+The `Bit` struct can be used for representing a size in bits.
 
 The `bit` feature must be enabled.
 
-TBD
+Usage of the `Bit` struct and the `Byte` struct is very similar. Also, There is the `AdjustedBit` struct. The difference lies in the fact that the `parse_str` method of the `Bit` struct cannot be configured to ignore case; it always does not ignore case.
+
+```rust
+# #[cfg(feature = "bit")]
+# {
+use byte_unit::{Bit, Unit};
+
+let byte = Bit::parse_str("123Kib").unwrap();
+
+let adjusted_byte = byte.get_adjusted_unit(Unit::Kbit);
+
+assert_eq!("125.952 Kb", adjusted_byte.to_string());
+assert_eq!("125.95 Kb", format!("{adjusted_byte:.2}"));
+# }
+```
 
 ## No Std
 
@@ -186,12 +200,16 @@ extern crate core;
 #[cfg(feature = "rust_decimal")]
 pub extern crate rust_decimal;
 
+#[cfg(feature = "bit")]
+mod bit;
 #[cfg(feature = "byte")]
 mod byte;
 mod common;
 mod errors;
 mod unit;
 
+#[cfg(feature = "bit")]
+pub use bit::*;
 #[cfg(feature = "byte")]
 pub use byte::*;
 pub use errors::*;
