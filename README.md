@@ -3,111 +3,121 @@ Byte Unit
 
 [![CI](https://github.com/magiclen/Byte-Unit/actions/workflows/ci.yml/badge.svg)](https://github.com/magiclen/Byte-Unit/actions/workflows/ci.yml)
 
-A library for interaction with units of bytes. The units are **B** for 1 byte, **KB** for 1000 bytes, **KiB** for 1024 bytes, **MB** for 1000000 bytes, **MiB** for 1048576 bytes, etc, and up to **ZiB** which is 1180591620717411303424 bytes.
+A library for interaction with units of bytes.
 
-The data type for storing the size of bytes is `u128` by default, but can also be changed to `u64` by disabling the default features (it will also cause the highest supported unit down to **PiB**).
+The units are **B** for 1 byte, **KB** for 1000 bytes, **MiB** for 1048576 bytes, **GB** for 1000000000 bytes, etc, and up to **E** or **Y** (if the `u128` feature is enabled).
 
 ## Usage
 
-### Macros
+The data types for storing the size in bits/bytes are `u64` by default, meaning the highest supported unit is up to **E**. If the `u128` feature is enabled, the data types will use `u128`, increasing the highest supported unit up to **Y**.
 
-There are `n_*_bytes` macros can be used. The star `*` means the unit. For example, `n_gb_bytes` can be used to get a **n-GB** value in bytes.
+### Unit
 
-```rust
-let result = byte_unit::n_gb_bytes!(4);
-
-assert_eq!(4000000000, result);
-```
-
-You may need to assign a primitive type if the `n` is not an integer.
+The enum `Unit` can be used for representing the unit of bits/bytes.
 
 ```rust
-let result = byte_unit::n_gb_bytes!(2.5, f64);
+use byte_unit::Unit;
 
-assert_eq!(2500000000, result);
+assert_eq!("KB", Unit::KB.as_str());
+assert_eq!("MiB", Unit::MiB.as_str());
+
+assert_eq!(Unit::KB, Unit::parse_str("K", true, true).unwrap());
+assert_eq!(Unit::Kbit, Unit::parse_str("K", true, false).unwrap());
+
+assert_eq!(Unit::KB, Unit::parse_str("KB", true, true).unwrap());
+assert_eq!(Unit::KB, Unit::parse_str("Kb", true, true).unwrap());
+assert_eq!(Unit::Kbit, Unit::parse_str("Kbit", true, true).unwrap());
+
+assert_eq!(Unit::KB, Unit::parse_str("KB", false, true).unwrap());
+assert_eq!(Unit::Kbit, Unit::parse_str("Kb", false, true).unwrap());
 ```
 
 ### Byte
 
-The `Byte` structure can be used for representing a size of bytes.
+The struct `Byte` can be used for representing a size in bytes.
 
-The `from_str` associated function can parse any **SIZE** string and return a `Byte` instance in common usage. The format of a **SIZE** string is like "123", "123KiB" or "50.84 MB".
+The `from_*` associated functions can be used to create a `Byte` instance from different data types.  The `as_*` methods can retrieve the size as a primitive type.
+
+```rust
+use byte_unit::{Byte, Unit};
+
+assert_eq!(15000, Byte::from_u64(15000).as_u64());
+assert_eq!(15000, Byte::from_u64_with_unit(15, Unit::KB).unwrap().as_u64());
+```
+
+You can also parse a string to create a `Byte` instance.
 
 ```rust
 use byte_unit::Byte;
 
-let result = Byte::from_str("50.84 MB").unwrap();
-
-assert_eq!(50840000, result.get_bytes());
+assert_eq!(50840000, Byte::parse_str("50.84 MB", true).unwrap().as_u64());
 ```
 
-You can also use the `from_bytes` and `from_unit` associated functions to create a `Byte` instance.
+A `Byte` instance can be formatted to string precisely. For more detailed usage, please refer to the implementation documentation of `Display::fmt` for `Byte`.
 
 ```rust
 use byte_unit::Byte;
 
-let result = Byte::from_bytes(1500000);
+let byte = Byte::from_u64(15500);
 
-assert_eq!(1500000, result.get_bytes());
+assert_eq!("15500", byte.to_string());
+
+assert_eq!("15.5 KB", format!("{byte:#}"));
+assert_eq!("15500 B", format!("{byte:#.0}"));
 ```
+
+#### Find out an appropriate Unit
+
+The `get_exact_unit` and `get_recoverable_unit` methods is useful if you want to find out a unit that is appropriate for a `Byte` instance.
 
 ```rust
-use byte_unit::{Byte, ByteUnit};
+use byte_unit::{Byte, Unit};
 
-let result = Byte::from_unit(1500f64, ByteUnit::KB).unwrap();
+let byte = Byte::from_u64(50840000);
 
-assert_eq!(1500000, result.get_bytes());
+assert_eq!((50840, Unit::KB), byte.get_exact_unit(false));
+assert_eq!((50.84f64.try_into().unwrap(), Unit::MB), byte.get_recoverable_unit(false, 2));
+assert_eq!((50840.into(), Unit::KB), byte.get_recoverable_unit(false, 0));
 ```
 
-### AdjustedByte
+#### AdaptedByte
+
+The struct `AdaptedByte` can be used for roughly representing a size of bytes with a unit.
 
 To change the unit of a `Byte` instance, you can use the `get_adjusted_unit` method.
 
-```rust
-use byte_unit::{Byte, ByteUnit};
-
-let byte = Byte::from_str("123KiB").unwrap();
-
-let adjusted_byte = byte.get_adjusted_unit(ByteUnit::KB);
-
-assert_eq!("125.95 KB", adjusted_byte.to_string());
-```
-
-To change the unit of a `Byte` instance automatically and appropriately, you can use the `get_appropriate_unit` method.
+An `AdaptedByte` instance can be formatted to string. For more detailed usage, please refer to the implementation documentation of `Display::fmt` for `AdaptedByte`.
 
 ```rust
-use byte_unit::Byte;
+use byte_unit::{Byte, Unit};
 
-let byte = Byte::from_bytes(1500000);
+let byte = Byte::parse_str("123KiB", true).unwrap();
 
-let adjusted_byte = byte.get_appropriate_unit(false);
+let adjusted_byte = byte.get_adjusted_unit(Unit::KB);
 
-assert_eq!("1.50 MB", adjusted_byte.to_string());
+assert_eq!("125.952 KB", adjusted_byte.to_string());
+assert_eq!("125.95 KB", format!("{adjusted_byte:.2}"));
 ```
+
+The `get_appropriate_unit` method can be used to automatically find a appropriate unit for creating an `AdaptedByte` instance.
 
 ```rust
-use byte_unit::Byte;
+use byte_unit::{Byte, Unit, UnitType};
 
-let byte = Byte::from_bytes(1500000);
+let byte = Byte::from_u64(1500000);
 
-let adjusted_byte = byte.get_appropriate_unit(true);
+let adjusted_byte = byte.get_appropriate_unit(UnitType::Binary);
 
-assert_eq!("1.43 MiB", adjusted_byte.to_string());
+assert_eq!("1.43 MiB", format!("{adjusted_byte:.2}"));
 ```
 
-The number of fractional digits created by the `to_string` method of a `AdjustedByte` instance is `2` unless the `ByteUnit` is `B`.
+### Bit
 
-To change the number of fractional digits in the formatted string, you can use the `format` method instead.
+The struct `Bit` can be used for representing a size in bits.
 
-```rust
-use byte_unit::Byte;
+The `bit` feature must be enabled.
 
-let byte = Byte::from_bytes(1500000);
-
-let adjusted_byte = byte.get_appropriate_unit(false);
-
-assert_eq!("1.5 MB", adjusted_byte.format(1));
-```
+TBD
 
 ## No Std
 
@@ -117,7 +127,7 @@ Disable the default features to compile this crate without std.
 [dependencies.byte-unit]
 version = "*"
 default-features = false
-features = ["u128"]
+features = ["byte"]
 ```
 
 ## Serde Support

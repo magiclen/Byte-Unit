@@ -38,10 +38,25 @@ jobs:
           - nightly
         features:
           -
+          - --features u128
           - --features serde
+          - --features bit
+          - --features bit --features serde
+          - --features u128 --features serde
+          - --features u128 --features bit
+          - --features u128 --features bit --features serde
           - --no-default-features
-          - --no-default-features --features alloc
-          - --no-default-features --features serde
+          - --no-default-features --features byte
+          - --no-default-features --features byte --features serde
+          - --no-default-features --features bit
+          - --no-default-features --features bit --features serde
+          - --no-default-features --features byte --features bit
+          - --no-default-features --features u128
+          - --no-default-features --features u128 --features byte
+          - --no-default-features --features u128 --features byte --features serde
+          - --no-default-features --features u128 --features bit
+          - --no-default-features --features u128 --features bit --features serde
+          - --no-default-features --features u128 --features byte --features bit
     name: Test ${{ matrix.toolchain }} on ${{ matrix.os }} (${{ matrix.features }})
     runs-on: ${{ matrix.os }}
     steps:
@@ -61,13 +76,28 @@ jobs:
           - macos-latest
           - windows-latest
         toolchain:
-          - "1.60"
+          - "1.70"
         features:
           -
+          - --features u128
           - --features serde
+          - --features bit
+          - --features bit --features serde
+          - --features u128 --features serde
+          - --features u128 --features bit
+          - --features u128 --features bit --features serde
           - --no-default-features
-          - --no-default-features --features alloc
-          - --no-default-features --features serde
+          - --no-default-features --features byte
+          - --no-default-features --features byte --features serde
+          - --no-default-features --features bit
+          - --no-default-features --features bit --features serde
+          - --no-default-features --features byte --features bit
+          - --no-default-features --features u128
+          - --no-default-features --features u128 --features byte
+          - --no-default-features --features u128 --features byte --features serde
+          - --no-default-features --features u128 --features bit
+          - --no-default-features --features u128 --features bit --features serde
+          - --no-default-features --features u128 --features byte --features bit
     name: Test ${{ matrix.toolchain }} on ${{ matrix.os }} (${{ matrix.features }})
     runs-on: ${{ matrix.os }}
     steps:
