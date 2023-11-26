@@ -88,19 +88,25 @@ impl Display for UnitParseError {
                 {
                     f.write_fmt(format_args!(", {expected_character:?}"))?;
                 }
+
+                if *also_expect_no_character {
+                    f.write_fmt(format_args!(
+                        ", {expected_character:?} or no character",
+                        expected_character = expected_characters[expected_characters_length - 1]
+                    ))?;
+                } else {
+                    f.write_fmt(format_args!(
+                        " or {expected_character:?} is expected)",
+                        expected_character = expected_characters[expected_characters_length - 1]
+                    ))?;
+                }
             }
 
             if *also_expect_no_character {
-                f.write_fmt(format_args!(
-                    ", {expected_character:?} or no character is expected)",
-                    expected_character = expected_characters[expected_characters_length - 1]
-                ))
-            } else {
-                f.write_fmt(format_args!(
-                    " or {expected_character:?} is expected)",
-                    expected_character = expected_characters[expected_characters_length - 1]
-                ))
+                f.write_str(" or no character")?;
             }
+
+            f.write_str(" is expected)")
         }
     }
 }
