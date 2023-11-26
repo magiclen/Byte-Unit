@@ -45,7 +45,7 @@ impl From<usize> for Byte {
     fn from(value: usize) -> Self {
         #[cfg(target_pointer_width = "128")]
         {
-            Byte::from_u128(value as u128).unwrap()
+            Byte::from_u128(value as u128).unwrap_or(Byte::MAX)
         }
 
         #[cfg(not(target_pointer_width = "128"))]
