@@ -285,10 +285,10 @@ impl Byte {
     ///
     /// assert_eq!("48.48480224609375 MiB", adjusted_byte.to_string());
     /// ```
-    pub fn get_appropriate_unit(&self, multiple_option: UnitType) -> AdjustedByte {
+    pub fn get_appropriate_unit(&self, unit_type: UnitType) -> AdjustedByte {
         let a = Unit::get_multiples_bytes();
 
-        let (skip, step) = match multiple_option {
+        let (skip, step) = match unit_type {
             UnitType::Binary => (0, 2),
             UnitType::Decimal => (1, 2),
             UnitType::Both => (0, 1),

@@ -4,7 +4,7 @@ use super::{AdjustedBit, Bit, Unit, UnitType};
 use crate::ParseError;
 
 impl From<Bit> for AdjustedBit {
-    /// `multiple_option` is set to `UnitType::Both`. See [`Bit::get_appropriate_unit`](./struct.Bit.html#method.get_appropriate_unit).
+    /// `unit_type` is set to `UnitType::Both`. See [`Bit::get_appropriate_unit`](./struct.Bit.html#method.get_appropriate_unit).
     #[inline]
     fn from(value: Bit) -> Self {
         value.get_appropriate_unit(UnitType::Both)
@@ -35,7 +35,7 @@ impl From<AdjustedBit> for Bit {
 impl FromStr for AdjustedBit {
     type Err = ParseError;
 
-    /// * `multiple_option` is set to `UnitType::Both`. See [`Bit::get_appropriate_unit`](./struct.Bit.html#method.get_appropriate_unit).
+    /// * `unit_type` is set to `UnitType::Both`. See [`Bit::get_appropriate_unit`](./struct.Bit.html#method.get_appropriate_unit).
     #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(Bit::parse_str(s)?.get_appropriate_unit(UnitType::Both))
