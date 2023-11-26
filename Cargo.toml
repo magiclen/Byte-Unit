@@ -1,6 +1,6 @@
 [package]
 name = "byte-unit"
-version = "5.0.2"
+version = "5.0.3"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2021"
 rust-version = "1.60"
@@ -35,3 +35,4 @@ bit = ["rust_decimal"]
 
 [package.metadata.docs.rs]
 all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
