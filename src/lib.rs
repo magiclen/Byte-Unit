@@ -93,7 +93,7 @@ assert_eq!(3100, a.divide(5).unwrap().as_u64());
 # }
 ```
 
-#### Find out an appropriate Unit
+#### Find Out an Appropriate Unit
 
 The `get_exact_unit` and `get_recoverable_unit` methods is useful if you want to find out a unit that is appropriate for a `Byte` instance.
 
