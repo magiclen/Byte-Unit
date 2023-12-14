@@ -1,6 +1,6 @@
 [package]
 name = "byte-unit"
-version = "5.0.3"
+version = "5.0.4"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2021"
 rust-version = "1.60"
@@ -24,11 +24,10 @@ serde_json = "1"
 [features]
 default = ["std", "byte"]
 
-serde = ["alloc", "dep:serde"]
+serde = ["dep:serde"]
 rust_decimal = ["dep:rust_decimal"]
 
-std = ["serde/std", "alloc"]
-alloc = []
+std = ["serde?/std"]
 u128 = []
 byte = ["rust_decimal"]
 bit = ["rust_decimal"]
