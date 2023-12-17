@@ -153,6 +153,6 @@ fn tests() {
         let byte = Byte::from_f64_with_unit(case.1 .0, case.1 .1).unwrap();
 
         assert_eq!(case.0, serde_json::to_string(&byte).unwrap(), "{i}");
-        assert_eq!(byte, serde_json::from_str(case.0).unwrap(), "{i}");
+        assert_eq!(byte, serde_json::from_str::<Byte>(case.0).unwrap(), "{i}");
     }
 }

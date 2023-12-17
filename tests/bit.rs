@@ -152,6 +152,6 @@ fn tests() {
         let bit = Bit::from_f64_with_unit(case.1 .0, case.1 .1).unwrap();
 
         assert_eq!(case.0, serde_json::to_string(&bit).unwrap(), "{i}");
-        assert_eq!(bit, serde_json::from_str(case.0).unwrap(), "{i}");
+        assert_eq!(bit, serde_json::from_str::<Bit>(case.0).unwrap(), "{i}");
     }
 }

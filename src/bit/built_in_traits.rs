@@ -1,4 +1,4 @@
-use core::str::FromStr;
+use core::{cmp::Ordering, str::FromStr};
 
 use super::Bit;
 use crate::{ExceededBoundsError, ParseError, TryFromIntError};
@@ -199,5 +199,117 @@ impl FromStr for Bit {
     #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Bit::parse_str(s)
+    }
+}
+
+impl PartialEq<u64> for Bit {
+    #[cfg(feature = "u128")]
+    #[inline]
+    fn eq(&self, other: &u64) -> bool {
+        self.0 == *other as u128
+    }
+
+    #[cfg(not(feature = "u128"))]
+    #[inline]
+    fn eq(&self, other: &u64) -> bool {
+        self.0 == *other
+    }
+}
+
+impl PartialEq<u128> for Bit {
+    #[cfg(feature = "u128")]
+    #[inline]
+    fn eq(&self, other: &u128) -> bool {
+        self.0 == *other
+    }
+
+    #[cfg(not(feature = "u128"))]
+    #[inline]
+    fn eq(&self, other: &u128) -> bool {
+        self.0 as u128 == *other
+    }
+}
+
+impl PartialEq<Bit> for u64 {
+    #[cfg(feature = "u128")]
+    #[inline]
+    fn eq(&self, other: &Bit) -> bool {
+        *self as u128 == other.0
+    }
+
+    #[cfg(not(feature = "u128"))]
+    #[inline]
+    fn eq(&self, other: &Bit) -> bool {
+        *self == other.0
+    }
+}
+
+impl PartialEq<Bit> for u128 {
+    #[cfg(feature = "u128")]
+    #[inline]
+    fn eq(&self, other: &Bit) -> bool {
+        *self == other.0
+    }
+
+    #[cfg(not(feature = "u128"))]
+    #[inline]
+    fn eq(&self, other: &Bit) -> bool {
+        *self == other.0 as u128
+    }
+}
+
+impl PartialOrd<u64> for Bit {
+    #[cfg(feature = "u128")]
+    #[inline]
+    fn partial_cmp(&self, other: &u64) -> Option<Ordering> {
+        self.0.partial_cmp(&(*other as u128))
+    }
+
+    #[cfg(not(feature = "u128"))]
+    #[inline]
+    fn partial_cmp(&self, other: &u64) -> Option<Ordering> {
+        self.0.partial_cmp(other)
+    }
+}
+
+impl PartialOrd<u128> for Bit {
+    #[cfg(feature = "u128")]
+    #[inline]
+    fn partial_cmp(&self, other: &u128) -> Option<Ordering> {
+        self.0.partial_cmp(other)
+    }
+
+    #[cfg(not(feature = "u128"))]
+    #[inline]
+    fn partial_cmp(&self, other: &u128) -> Option<Ordering> {
+        (self.0 as u128).partial_cmp(other)
+    }
+}
+
+impl PartialOrd<Bit> for u64 {
+    #[cfg(feature = "u128")]
+    #[inline]
+    fn partial_cmp(&self, other: &Bit) -> Option<Ordering> {
+        (*self as u128).partial_cmp(&other.0)
+    }
+
+    #[cfg(not(feature = "u128"))]
+    #[inline]
+    fn partial_cmp(&self, other: &Bit) -> Option<Ordering> {
+        self.partial_cmp(&other.0)
+    }
+}
+
+impl PartialOrd<Bit> for u128 {
+    #[cfg(feature = "u128")]
+    #[inline]
+    fn partial_cmp(&self, other: &Bit) -> Option<Ordering> {
+        self.partial_cmp(&other.0)
+    }
+
+    #[cfg(not(feature = "u128"))]
+    #[inline]
+    fn partial_cmp(&self, other: &Bit) -> Option<Ordering> {
+        self.partial_cmp(&(other.0 as u128))
     }
 }
