@@ -123,13 +123,13 @@ impl Bit {
     #[inline]
     pub fn get_recoverable_unit(
         self,
-        allow_in_bits: bool,
+        allow_in_bytes: bool,
         mut precision: usize,
     ) -> (Decimal, Unit) {
         let bits_v = self.as_u128();
         let bits_vd = Decimal::from(bits_v);
 
-        let a = if allow_in_bits { Unit::get_multiples() } else { Unit::get_multiples_bits() };
+        let a = if allow_in_bytes { Unit::get_multiples() } else { Unit::get_multiples_bits() };
         let mut i = a.len() - 1;
 
         if precision >= 28 {
