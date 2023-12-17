@@ -189,6 +189,16 @@ Enable the `serde` feature to support the serde framework.
 version = "*"
 features = ["serde"]
 ```
+
+## Rocket Support
+
+Enable the `rocket` feature to support the Rocket framework.
+
+```toml
+[dependencies.byte-unit]
+version = "*"
+features = ["rocket"]
+```
 */
 
 #![cfg_attr(not(feature = "std"), no_std)]

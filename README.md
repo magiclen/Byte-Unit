@@ -168,6 +168,16 @@ version = "*"
 features = ["serde"]
 ```
 
+## Rocket Support
+
+Enable the `rocket` feature to support the Rocket framework.
+
+```toml
+[dependencies.byte-unit]
+version = "*"
+features = ["rocket"]
+```
+
 ## Crates.io
 
 https://crates.io/crates/byte-unit
