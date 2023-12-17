@@ -1,6 +1,8 @@
 mod built_in_traits;
+#[cfg(feature = "rocket")]
+mod rocket_traits;
 #[cfg(feature = "serde")]
-mod serde;
+mod serde_traits;
 
 use core::{
     cmp::Ordering,

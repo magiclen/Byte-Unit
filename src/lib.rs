@@ -197,7 +197,6 @@ features = ["serde"]
 #[cfg(feature = "serde")]
 #[macro_use]
 extern crate alloc;
-extern crate core;
 #[cfg(feature = "rust_decimal")]
 pub extern crate rust_decimal;
 

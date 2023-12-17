@@ -3,8 +3,10 @@ mod built_in_traits;
 mod constants;
 mod decimal;
 mod parse;
+#[cfg(feature = "rocket")]
+mod rocket_traits;
 #[cfg(feature = "serde")]
-mod serde;
+mod serde_traits;
 
 use core::fmt::{self, Alignment, Display, Formatter, Write};
 

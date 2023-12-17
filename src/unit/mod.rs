@@ -1,7 +1,9 @@
 mod built_in_trait;
 pub(crate) mod parse;
+#[cfg(feature = "rocket")]
+mod rocket_traits;
 #[cfg(feature = "serde")]
-mod serde;
+mod serde_traits;
 #[cfg(any(feature = "byte", feature = "bit"))]
 mod unit_type;
 

@@ -40,16 +40,20 @@ jobs:
           -
           - --features u128
           - --features serde
+          - --features rocket
           - --features bit
           - --features bit --features serde
+          - --features bit --features rocket
           - --features u128 --features serde
           - --features u128 --features bit
           - --features u128 --features bit --features serde
           - --no-default-features
           - --no-default-features --features byte
           - --no-default-features --features byte --features serde
+          - --no-default-features --features byte --features rocket
           - --no-default-features --features bit
           - --no-default-features --features bit --features serde
+          - --no-default-features --features bit --features rocket
           - --no-default-features --features byte --features bit
           - --no-default-features --features u128
           - --no-default-features --features u128 --features byte
@@ -76,21 +80,25 @@ jobs:
           - macos-latest
           - windows-latest
         toolchain:
-          - "1.60"
+          - 1.69
         features:
           -
           - --features u128
           - --features serde
+          - --features rocket
           - --features bit
           - --features bit --features serde
+          - --features bit --features rocket
           - --features u128 --features serde
           - --features u128 --features bit
           - --features u128 --features bit --features serde
           - --no-default-features
           - --no-default-features --features byte
           - --no-default-features --features byte --features serde
+          - --no-default-features --features byte --features rocket
           - --no-default-features --features bit
           - --no-default-features --features bit --features serde
+          - --no-default-features --features bit --features rocket
           - --no-default-features --features byte --features bit
           - --no-default-features --features u128
           - --no-default-features --features u128 --features byte
