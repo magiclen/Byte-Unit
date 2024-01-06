@@ -160,12 +160,12 @@ Usage of the `Bit` struct and the `Byte` struct is very similar. Also, There is 
 # {
 use byte_unit::{Bit, Unit};
 
-let byte = Bit::parse_str("123Kib").unwrap();
+let bit = Bit::parse_str("123Kib").unwrap();
 
-let adjusted_byte = byte.get_adjusted_unit(Unit::Kbit);
+let adjusted_bit = bit.get_adjusted_unit(Unit::Kbit);
 
-assert_eq!("125.952 Kb", adjusted_byte.to_string());
-assert_eq!("125.95 Kb", format!("{adjusted_byte:.2}"));
+assert_eq!("125.952 Kb", adjusted_bit.to_string());
+assert_eq!("125.95 Kb", format!("{adjusted_bit:.2}"));
 # }
 ```
 
