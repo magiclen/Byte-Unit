@@ -218,7 +218,7 @@ impl Bit {
         }
     }
 
-    /// Create a new `Bit` instance from a size im bits.
+    /// Create a new `Bit` instance from a size in bits.
     ///
     /// # Examples
     ///

@@ -218,7 +218,7 @@ impl Byte {
         }
     }
 
-    /// Create a new `Byte` instance from a size im bytes.
+    /// Create a new `Byte` instance from a size in bytes.
     ///
     /// # Examples
     ///
