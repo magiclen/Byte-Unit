@@ -41,6 +41,7 @@ impl From<u8> for Byte {
 }
 
 impl From<usize> for Byte {
+    #[allow(unexpected_cfgs)]
     #[inline]
     fn from(value: usize) -> Self {
         #[cfg(target_pointer_width = "128")]
@@ -103,6 +104,7 @@ impl TryFrom<i8> for Byte {
 impl TryFrom<isize> for Byte {
     type Error = ExceededBoundsError;
 
+    #[allow(unexpected_cfgs)]
     #[inline]
     fn try_from(value: isize) -> Result<Self, Self::Error> {
         #[cfg(target_pointer_width = "128")]
@@ -179,6 +181,7 @@ impl TryFrom<Byte> for u8 {
 impl TryFrom<Byte> for usize {
     type Error = TryFromIntError;
 
+    #[allow(unexpected_cfgs)]
     #[inline]
     fn try_from(byte: Byte) -> Result<Self, Self::Error> {
         #[cfg(target_pointer_width = "128")]

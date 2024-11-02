@@ -41,6 +41,7 @@ impl From<u8> for Bit {
 }
 
 impl From<usize> for Bit {
+    #[allow(unexpected_cfgs)]
     #[inline]
     fn from(value: usize) -> Self {
         #[cfg(target_pointer_width = "128")]
@@ -103,6 +104,7 @@ impl TryFrom<i8> for Bit {
 impl TryFrom<isize> for Bit {
     type Error = ExceededBoundsError;
 
+    #[allow(unexpected_cfgs)]
     #[inline]
     fn try_from(value: isize) -> Result<Self, Self::Error> {
         #[cfg(target_pointer_width = "128")]
@@ -179,6 +181,7 @@ impl TryFrom<Bit> for u8 {
 impl TryFrom<Bit> for usize {
     type Error = TryFromIntError;
 
+    #[allow(unexpected_cfgs)]
     #[inline]
     fn try_from(bit: Bit) -> Result<Self, Self::Error> {
         #[cfg(target_pointer_width = "128")]
