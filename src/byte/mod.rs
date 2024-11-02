@@ -715,6 +715,7 @@ impl Byte {
     /// # Points to Note
     ///
     /// * If the calculated byte is too large, this function will return `None`.
+    #[allow(unexpected_cfgs)]
     #[inline]
     pub const fn multiply(self, rhs: usize) -> Option<Byte> {
         #[cfg(feature = "u128")]
@@ -760,6 +761,7 @@ impl Byte {
     ///
     /// * If the input right-hand side is zero, this function will return `None`.
     /// * The result will be rounded down.
+    #[allow(unexpected_cfgs)]
     #[inline]
     pub const fn divide(self, rhs: usize) -> Option<Byte> {
         #[cfg(feature = "u128")]

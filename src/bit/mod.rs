@@ -698,6 +698,7 @@ impl Bit {
     /// # Points to Note
     ///
     /// * If the calculated bit is too large, this function will return `None`.
+    #[allow(unexpected_cfgs)]
     #[inline]
     pub const fn multiply(self, rhs: usize) -> Option<Bit> {
         #[cfg(feature = "u128")]
@@ -743,6 +744,7 @@ impl Bit {
     ///
     /// * If the input right-hand side is zero, this function will return `None`.
     /// * The result will be rounded down.
+    #[allow(unexpected_cfgs)]
     #[inline]
     pub const fn divide(self, rhs: usize) -> Option<Bit> {
         #[cfg(feature = "u128")]

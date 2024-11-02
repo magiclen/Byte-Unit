@@ -111,7 +111,6 @@ impl Display for UnitParseError {
     }
 }
 
-#[cfg(any(feature = "byte", feature = "bit"))]
 #[cfg(feature = "std")]
 impl Error for UnitParseError {}
 
