@@ -70,10 +70,7 @@ impl Byte {
             match unit {
                 Unit::Bit => (size / DECIMAL_EIGHT).ceil(),
                 Unit::B => size,
-                _ => match size.checked_mul(Decimal::from(unit.as_bytes_u128())) {
-                    Some(v) => v,
-                    None => return None,
-                },
+                _ => size.checked_mul(Decimal::from(unit.as_bytes_u128()))?,
             }
         };
 

@@ -67,10 +67,7 @@ impl Bit {
         let v = {
             match unit {
                 Unit::Bit => size,
-                _ => match size.checked_mul(Decimal::from(unit.as_bits_u128())) {
-                    Some(v) => v,
-                    None => return None,
-                },
+                _ => size.checked_mul(Decimal::from(unit.as_bits_u128()))?,
             }
         };
 
