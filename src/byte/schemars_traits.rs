@@ -1,4 +1,4 @@
-use alloc::borrow::Cow;
+use alloc::{borrow::Cow, string::String};
 
 use schemars::{JsonSchema, Schema, SchemaGenerator};
 
