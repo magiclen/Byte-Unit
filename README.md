@@ -168,6 +168,16 @@ version = "*"
 features = ["serde"]
 ```
 
+## Schemars Support
+
+Enable the `schemars` feature to support Schemars. Probably the `serde` feature is also needed.
+
+```toml
+[dependencies.byte-unit]
+version = "*"
+features = ["serde", "schemars"]
+```
+
 ## Rocket Support
 
 Enable the `rocket` feature to support the Rocket framework.

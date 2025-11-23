@@ -1,6 +1,8 @@
 mod built_in_traits;
 #[cfg(feature = "rocket")]
 mod rocket_traits;
+#[cfg(feature = "schemars")]
+mod schemars_traits;
 #[cfg(feature = "serde")]
 mod serde_traits;
 
