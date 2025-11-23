@@ -202,7 +202,8 @@ features = ["rocket"]
 */
 
 #![cfg_attr(not(feature = "std"), no_std)]
-#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![allow(unexpected_cfgs)]
+#![cfg_attr(docsrs_1_92, feature(doc_cfg))]
 
 #[cfg(all(feature = "serde", any(feature = "byte", feature = "bit")))]
 #[macro_use]
