@@ -39,27 +39,27 @@ jobs:
         features:
           -
           - --features u128
-          - --features serde --features --schemars
+          - --features serde --features schemars
           - --features rocket
           - --features bit
-          - --features bit --features serde --features --schemars
+          - --features bit --features serde --features schemars
           - --features bit --features rocket
-          - --features u128 --features serde --features --schemars
+          - --features u128 --features serde --features schemars
           - --features u128 --features bit
-          - --features u128 --features bit --features serde --features --schemars
+          - --features u128 --features bit --features serde --features schemars
           - --no-default-features
           - --no-default-features --features byte
-          - --no-default-features --features byte --features serde --features --schemars
+          - --no-default-features --features byte --features serde --features schemars
           - --no-default-features --features byte --features rocket
           - --no-default-features --features bit
-          - --no-default-features --features bit --features serde --features --schemars
+          - --no-default-features --features bit --features serde --features schemars
           - --no-default-features --features bit --features rocket
           - --no-default-features --features byte --features bit
           - --no-default-features --features u128
           - --no-default-features --features u128 --features byte
-          - --no-default-features --features u128 --features byte --features serde --features --schemars
+          - --no-default-features --features u128 --features byte --features serde --features schemars
           - --no-default-features --features u128 --features bit
-          - --no-default-features --features u128 --features bit --features serde --features --schemars
+          - --no-default-features --features u128 --features bit --features serde --features schemars
           - --no-default-features --features u128 --features byte --features bit
     name: Test ${{ matrix.toolchain }} on ${{ matrix.os }} (${{ matrix.features }})
     runs-on: ${{ matrix.os }}
@@ -84,27 +84,27 @@ jobs:
         features:
           -
           - --features u128
-          - --features serde --features --schemars
+          - --features serde --features schemars
           - --features rocket
           - --features bit
-          - --features bit --features serde --features --schemars
+          - --features bit --features serde --features schemars
           - --features bit --features rocket
-          - --features u128 --features serde --features --schemars
+          - --features u128 --features serde --features schemars
           - --features u128 --features bit
-          - --features u128 --features bit --features serde --features --schemars
+          - --features u128 --features bit --features serde --features schemars
           - --no-default-features
           - --no-default-features --features byte
-          - --no-default-features --features byte --features serde --features --schemars
+          - --no-default-features --features byte --features serde --features schemars
           - --no-default-features --features byte --features rocket
           - --no-default-features --features bit
-          - --no-default-features --features bit --features serde --features --schemars
+          - --no-default-features --features bit --features serde --features schemars
           - --no-default-features --features bit --features rocket
           - --no-default-features --features byte --features bit
           - --no-default-features --features u128
           - --no-default-features --features u128 --features byte
-          - --no-default-features --features u128 --features byte --features serde --features --schemars
+          - --no-default-features --features u128 --features byte --features serde --features schemars
           - --no-default-features --features u128 --features bit
-          - --no-default-features --features u128 --features bit --features serde --features --schemars
+          - --no-default-features --features u128 --features bit --features serde --features schemars
           - --no-default-features --features u128 --features byte --features bit
     name: Test ${{ matrix.toolchain }} on ${{ matrix.os }} (${{ matrix.features }})
     runs-on: ${{ matrix.os }}
