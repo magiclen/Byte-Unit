@@ -1,8 +1,9 @@
-use core::fmt::{self, Display, Formatter};
 #[cfg(any(feature = "byte", feature = "bit"))]
 pub use core::num::TryFromIntError;
-#[cfg(feature = "std")]
-use std::error::Error;
+use core::{
+    error::Error,
+    fmt::{self, Display, Formatter},
+};
 
 #[cfg(any(feature = "byte", feature = "bit"))]
 use rust_decimal::Decimal;
@@ -21,7 +22,6 @@ impl Display for ExceededBoundsError {
 }
 
 #[cfg(any(feature = "byte", feature = "bit"))]
-#[cfg(feature = "std")]
 impl Error for ExceededBoundsError {}
 
 #[cfg(any(feature = "byte", feature = "bit"))]
@@ -50,7 +50,6 @@ impl Display for ValueParseError {
 }
 
 #[cfg(any(feature = "byte", feature = "bit"))]
-#[cfg(feature = "std")]
 impl Error for ValueParseError {}
 
 /// The error type returned when parsing units.
@@ -111,7 +110,6 @@ impl Display for UnitParseError {
     }
 }
 
-#[cfg(feature = "std")]
 impl Error for UnitParseError {}
 
 #[cfg(any(feature = "byte", feature = "bit"))]
@@ -150,5 +148,4 @@ impl Display for ParseError {
 }
 
 #[cfg(any(feature = "byte", feature = "bit"))]
-#[cfg(feature = "std")]
 impl Error for ParseError {}
