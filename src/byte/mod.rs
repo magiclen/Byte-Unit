@@ -368,7 +368,7 @@ impl Byte {
         let v = {
             match unit {
                 Unit::Bit => {
-                    if size & 11 > 0 {
+                    if size & 7 > 0 {
                         (size >> 3) + 1
                     } else {
                         size >> 3
@@ -411,7 +411,7 @@ impl Byte {
             let v = {
                 match unit {
                     Unit::Bit => {
-                        if size & 11 > 0 {
+                        if size & 7 > 0 {
                             (size >> 3) + 1
                         } else {
                             size >> 3
