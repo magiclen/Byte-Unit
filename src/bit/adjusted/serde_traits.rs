@@ -5,9 +5,8 @@ use core::{
 };
 
 use serde::{
-    self,
+    self, Deserialize, Deserializer, Serialize, Serializer,
     de::{Error as DeError, Visitor},
-    Deserialize, Deserializer, Serialize, Serializer,
 };
 
 use super::AdjustedBit;

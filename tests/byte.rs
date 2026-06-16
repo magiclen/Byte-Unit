@@ -123,7 +123,7 @@ fn recoverable_unit() {
 
     for (i, case) in cases.iter().enumerate() {
         assert_eq!(
-            (Decimal::from_f64(case.0 .0).unwrap(), case.0 .1),
+            (Decimal::from_f64(case.0.0).unwrap(), case.0.1),
             Byte::parse_str(case.1, true).unwrap().get_recoverable_unit(true, 3),
             "{i}"
         );
@@ -164,7 +164,7 @@ fn tests() {
     ];
 
     for (i, case) in cases.iter().enumerate() {
-        let byte = Byte::from_f64_with_unit(case.1 .0, case.1 .1).unwrap();
+        let byte = Byte::from_f64_with_unit(case.1.0, case.1.1).unwrap();
 
         assert_eq!(case.0, serde_json::to_string(&byte).unwrap(), "{i}");
         assert_eq!(byte, serde_json::from_str::<Byte>(case.0).unwrap(), "{i}");

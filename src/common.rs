@@ -6,7 +6,7 @@ use rust_decimal::prelude::*;
 /// # Safety
 /// Make sure the input is valid on your own.
 pub(crate) unsafe fn get_char_from_bytes(e: u8, mut bytes: Bytes) -> char {
-    let width = utf8_width::get_width_assume_valid(e);
+    let width = unsafe { utf8_width::get_width_assume_valid(e) };
 
     let mut char_bytes = [0; 4];
 
@@ -122,9 +122,5 @@ pub(crate) fn is_zero_remainder_decimal(
         }
     };
 
-    if b * quotient_round == a {
-        Some(quotient_round)
-    } else {
-        None
-    }
+    if b * quotient_round == a { Some(quotient_round) } else { None }
 }

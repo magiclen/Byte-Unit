@@ -12,7 +12,7 @@ use core::{
 };
 
 use super::{Bit, Unit};
-use crate::{common::round_fractional_part_f64, UnitType};
+use crate::{UnitType, common::round_fractional_part_f64};
 
 /// Generated from the [`Bit::get_adjusted_unit`](./struct.Bit.html#method.get_adjusted_unit) method or the the [`Bit::get_appropriate_unit`](./struct.Bit.html#method.get_appropriate_unit) method.
 ///
