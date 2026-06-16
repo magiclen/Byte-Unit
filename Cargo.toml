@@ -1,6 +1,6 @@
 [package]
 name = "byte-unit"
-version = "5.2.2"
+version = "5.2.3"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2024"
 rust-version = "1.85"
