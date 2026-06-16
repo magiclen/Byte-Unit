@@ -1,6 +1,6 @@
 #![cfg(feature = "bit")]
 
-use byte_unit::{Bit, Unit, UnitType};
+use byte_unit::{Bit, ParseError, Unit, UnitType};
 use rust_decimal::prelude::*;
 
 #[test]
@@ -61,6 +61,20 @@ fn parse_str() {
             Err(_) => {
                 assert!(result.is_err(), "{i}")
             },
+        }
+    }
+}
+
+#[test]
+fn parse_str_unit_error_character() {
+    let cases = [('r', "2048r"), ('é', "2048é")];
+
+    for (i, (expected, input)) in cases.iter().enumerate() {
+        let error = Bit::parse_str(input).unwrap_err();
+
+        match error {
+            ParseError::Unit(error) => assert_eq!(*expected, error.character, "{i}"),
+            error => panic!("{i}\n{error}"),
         }
     }
 }

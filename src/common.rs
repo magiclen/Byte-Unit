@@ -18,7 +18,9 @@ pub(crate) unsafe fn get_char_from_bytes(e: u8, mut bytes: Bytes) -> char {
         }
     }
 
-    char::from_u32_unchecked(u32::from_ne_bytes(char_bytes))
+    let s = unsafe { core::str::from_utf8_unchecked(&char_bytes[..width]) };
+
+    unsafe { s.chars().next().unwrap_unchecked() }
 }
 
 #[cfg(any(feature = "byte", feature = "bit"))]

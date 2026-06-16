@@ -108,6 +108,17 @@ fn parse_str() {
     }
 }
 
+#[test]
+fn parse_str_error_character() {
+    let cases = [('r', "r"), ('é', "é"), ('中', "中")];
+
+    for (i, (expected, input)) in cases.iter().enumerate() {
+        let error = Unit::parse_str(input, true, true).unwrap_err();
+
+        assert_eq!(*expected, error.character, "{i}");
+    }
+}
+
 #[cfg(feature = "serde")]
 #[test]
 fn tests() {
