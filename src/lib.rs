@@ -212,8 +212,7 @@ features = ["rocket"]
 */
 
 #![cfg_attr(not(feature = "std"), no_std)]
-#![allow(unexpected_cfgs)]
-#![cfg_attr(docsrs_1_92, feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 #[cfg(all(any(feature = "serde", feature = "schemars"), any(feature = "byte", feature = "bit")))]
 extern crate alloc;
