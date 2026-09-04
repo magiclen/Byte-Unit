@@ -170,3 +170,12 @@ fn tests() {
         assert_eq!(byte, serde_json::from_str::<Byte>(case.0).unwrap(), "{i}");
     }
 }
+
+#[test]
+fn from_non_finite_returns_none() {
+    // Non-finite inputs must return None instead of panicking, in both builds.
+    assert_eq!(Byte::from_f64(f64::INFINITY), None);
+    assert_eq!(Byte::from_f64(f64::NAN), None);
+    assert_eq!(Byte::from_f32(f32::INFINITY), None);
+    assert_eq!(Byte::from_f32(f32::NAN), None);
+}
