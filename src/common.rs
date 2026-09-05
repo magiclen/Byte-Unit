@@ -36,7 +36,13 @@ pub(crate) fn ceil_f64(v: f64) -> f64 {
 pub(crate) fn ceil_f64(v: f64) -> f64 {
     debug_assert!(v >= 0.0);
 
-    Decimal::from_f64(v).unwrap().ceil().to_f64().unwrap()
+    // `Decimal::from_f64` returns `None` for non-finite values (e.g. infinity),
+    // so fall back to the input to mirror `f64::ceil` in the `std` path and
+    // avoid panicking.
+    match Decimal::from_f64(v) {
+        Some(d) => d.ceil().to_f64().unwrap_or(v),
+        None => v,
+    }
 }
 
 #[cfg(any(feature = "byte", feature = "bit"))]
@@ -54,7 +60,13 @@ pub(crate) fn ceil_f32(v: f32) -> f32 {
 pub(crate) fn ceil_f32(v: f32) -> f32 {
     debug_assert!(v >= 0.0);
 
-    Decimal::from_f32(v).unwrap().ceil().to_f32().unwrap()
+    // `Decimal::from_f32` returns `None` for non-finite values (e.g. infinity),
+    // so fall back to the input to mirror `f32::ceil` in the `std` path and
+    // avoid panicking.
+    match Decimal::from_f32(v) {
+        Some(d) => d.ceil().to_f32().unwrap_or(v),
+        None => v,
+    }
 }
 
 #[cfg(any(feature = "byte", feature = "bit"))]
