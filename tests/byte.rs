@@ -170,3 +170,112 @@ fn tests() {
         assert_eq!(byte, serde_json::from_str::<Byte>(case.0).unwrap(), "{i}");
     }
 }
+
+#[test]
+fn from_float() {
+    let cases = [(0, 0.0), (0, -0.0), (1, 1.0), (2, 1.25), (1, 1e-30), (15000000, 15000000.0)];
+
+    for (expected, input) in cases {
+        assert_eq!(Some(Byte::from_u64(expected)), Byte::from_f64(input));
+        assert_eq!(Some(Byte::from_u64(expected)), Byte::from_f32(input as f32));
+    }
+
+    assert_eq!(Some(Byte::from_u64(2)), Byte::from_f64(1.0 + f64::EPSILON));
+    assert_eq!(Some(Byte::from_u64(2)), Byte::from_f32(1.0 + f32::EPSILON));
+    assert_eq!(Some(Byte::from_u64(1 << 52)), Byte::from_f64((1u64 << 52) as f64));
+    assert_eq!(Some(Byte::from_u64(1 << 23)), Byte::from_f32((1u64 << 23) as f32));
+
+    for input in [f64::INFINITY, f64::NEG_INFINITY, f64::NAN, 1e30, -1.0] {
+        assert_eq!(None, Byte::from_f64(input));
+        assert_eq!(None, Byte::from_f32(input as f32));
+    }
+}
+
+#[test]
+fn arithmetic_bounds() {
+    let one = Byte::from_u64(1);
+    let below_max = Byte::MAX.subtract(one).unwrap();
+
+    assert_eq!(Some(Byte::from_u64(3)), one.add(Byte::from_u64(2)));
+    assert_eq!(Some(Byte::from_u64(6)), Byte::from_u64(2).multiply(3));
+    assert_eq!(Some(Byte::MAX), below_max.add(one));
+    assert_eq!(Some(Byte::MAX), Byte::MAX.multiply(1));
+    assert_eq!(Some(Byte::MIN), Byte::MAX.multiply(0));
+    assert_eq!(None, Byte::MAX.add(one));
+    assert_eq!(None, Byte::MAX.multiply(2));
+}
+
+#[test]
+fn into_usize() {
+    assert_eq!(Ok(123usize), usize::try_from(Byte::from_u64(123)));
+    let max = Byte::from_u128(usize::MAX as u128).unwrap();
+    assert_eq!(Ok(usize::MAX), usize::try_from(max));
+
+    if let Some(too_large) = Byte::from_u128(usize::MAX as u128 + 1) {
+        assert!(usize::try_from(too_large).is_err());
+    }
+}
+
+#[test]
+fn parse_fraction_overflow() {
+    let input = format!("{}.9", Decimal::MAX);
+    assert!(matches!(
+        Byte::parse_str(&input, false),
+        Err(ParseError::Value(byte_unit::ValueParseError::NumberTooLong))
+    ));
+}
+
+#[test]
+fn adjusted_max() {
+    assert_eq!(Byte::MAX, Byte::MAX.get_adjusted_unit(Unit::B).get_byte());
+    for unit in [Unit::B, Unit::KB, Unit::KiB] {
+        let adjusted = Byte::MAX.get_adjusted_unit(unit);
+        assert_eq!(adjusted, adjusted);
+        assert_eq!(core::cmp::Ordering::Equal, adjusted.cmp(&adjusted));
+    }
+}
+
+#[test]
+fn adjusted_format_precision() {
+    let adjusted = Byte::from_u64_with_unit(1250, Unit::B).unwrap().get_adjusted_unit(Unit::KB);
+    assert_eq!("1.3 KB", format!("{adjusted:#.1}"));
+    assert_eq!("1 KB", format!("{adjusted:#.0}"));
+    assert_eq!("1.25 KB", format!("{adjusted:#.20}"));
+    assert_eq!(" 1.3 KB", format!("{adjusted:>#7.1}"));
+
+    let adjusted = Byte::from_u64(1).get_adjusted_unit(Unit::B);
+    assert_eq!("1 B", format!("{adjusted:.2}"));
+    assert_eq!("1        B", format!("{adjusted:10.2}"));
+    assert_eq!("       1 B", format!("{adjusted:>10.2}"));
+}
+
+#[cfg(feature = "serde")]
+#[test]
+fn adjusted_serde() {
+    for value in [Byte::from_u64(1250), Byte::MAX] {
+        for unit in [Unit::B, Unit::KB, Unit::KiB] {
+            let adjusted = value.get_adjusted_unit(unit);
+            let serialized = serde_json::to_string(&adjusted).unwrap();
+            let recovered: byte_unit::AdjustedByte = serde_json::from_str(&serialized).unwrap();
+            if value == Byte::MAX {
+                assert_eq!(Byte::MAX, serde_json::from_str::<Byte>(&serialized).unwrap());
+            } else {
+                assert_eq!(adjusted, recovered);
+            }
+        }
+    }
+}
+
+#[test]
+fn decimal_bits_to_bytes() {
+    let cases = [
+        (1, Decimal::ONE),
+        (1, Decimal::from(8)),
+        (2, Decimal::new(81, 1)),
+        (1, Decimal::new(1, 28)),
+    ];
+    for (expected, input) in cases {
+        assert_eq!(Some(Byte::from_u64(expected)), Byte::from_decimal_with_unit(input, Unit::Bit));
+    }
+    assert_eq!(None, Byte::from_decimal_with_unit(Decimal::NEGATIVE_ONE, Unit::Bit));
+}

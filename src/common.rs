@@ -36,7 +36,14 @@ pub(crate) fn ceil_f64(v: f64) -> f64 {
 pub(crate) fn ceil_f64(v: f64) -> f64 {
     debug_assert!(v >= 0.0);
 
-    Decimal::from_f64(v).unwrap().ceil().to_f64().unwrap()
+    // Values at or above this limit have no fractional bits.
+    if v >= (1u64 << 52) as f64 || v == 0.0 {
+        return v;
+    }
+
+    let trunc = v as u64 as f64;
+
+    if trunc < v { trunc + 1.0 } else { trunc }
 }
 
 #[cfg(any(feature = "byte", feature = "bit"))]
@@ -54,7 +61,14 @@ pub(crate) fn ceil_f32(v: f32) -> f32 {
 pub(crate) fn ceil_f32(v: f32) -> f32 {
     debug_assert!(v >= 0.0);
 
-    Decimal::from_f32(v).unwrap().ceil().to_f32().unwrap()
+    // Values at or above this limit have no fractional bits.
+    if v >= (1u64 << 23) as f32 || v == 0.0 {
+        return v;
+    }
+
+    let trunc = v as u32 as f32;
+
+    if trunc < v { trunc + 1.0 } else { trunc }
 }
 
 #[cfg(any(feature = "byte", feature = "bit"))]
@@ -77,21 +91,21 @@ pub fn round_fractional_part_f64(value: f64, mut precision: usize) -> f64 {
 pub fn round_fractional_part_f64(value: f64, mut precision: usize) -> f64 {
     debug_assert!(value >= 0.0);
 
-    let value = Decimal::from_f64(value).unwrap();
+    precision = precision.min(16);
 
-    if precision > 16 {
-        precision = 16;
-    } else if precision == 0 {
-        return value.round().to_f64().unwrap();
-    }
+    let scale = 10u64.pow(precision as u32) as f64;
+    let scaled = value * scale;
 
-    let trunc = value.trunc();
-    let mut fract = value.fract();
+    // Large floating-point values already represent whole numbers.
+    let rounded = if scaled >= (1u64 << 52) as f64 {
+        scaled
+    } else {
+        let trunc = scaled as u64 as f64;
 
-    let scale = Decimal::from(10u128.pow(precision as u32));
-    fract = (fract * scale).round() / scale;
+        if scaled - trunc >= 0.5 { trunc + 1.0 } else { trunc }
+    };
 
-    (trunc + fract).to_f64().unwrap()
+    rounded / scale
 }
 
 #[cfg(any(feature = "byte", feature = "bit"))]

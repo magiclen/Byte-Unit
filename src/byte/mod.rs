@@ -620,7 +620,16 @@ impl Byte {
     #[inline]
     pub const fn add(self, rhs: Byte) -> Option<Byte> {
         match self.0.checked_add(rhs.0) {
-            Some(v) => Some(Byte(v)),
+            Some(v) => {
+                #[cfg(feature = "u128")]
+                {
+                    Self::from_u128(v)
+                }
+                #[cfg(not(feature = "u128"))]
+                {
+                    Some(Byte(v))
+                }
+            },
             None => None,
         }
     }
@@ -675,7 +684,7 @@ impl Byte {
         #[cfg(feature = "u128")]
         {
             match self.0.checked_mul(rhs as u128) {
-                Some(v) => Some(Byte(v)),
+                Some(v) => Self::from_u128(v),
                 None => None,
             }
         }

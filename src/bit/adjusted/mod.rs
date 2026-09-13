@@ -145,6 +145,13 @@ impl Display for AdjustedBit {
                             },
                             Alignment::Right => f.write_fmt(format_args!("{value:>width$}"))?,
                         }
+                    } else if matches!(unit, Unit::Bit | Unit::B) {
+                        match alignment {
+                            Alignment::Left | Alignment::Center => {
+                                f.write_fmt(format_args!("{value:<width$}"))?
+                            },
+                            Alignment::Right => f.write_fmt(format_args!("{value:>width$}"))?,
+                        }
                     } else {
                         match alignment {
                             Alignment::Left | Alignment::Center => {
@@ -218,10 +225,11 @@ impl AdjustedBit {
     ///
     /// # Points to Note
     ///
+    /// * Values rounded above the supported range return the maximum value.
     /// * The result may not be logically equal to the original `Bit` instance due to the accuracy of floating-point numbers.
     #[inline]
     pub fn get_bit(&self) -> Bit {
-        Bit::from_f64_with_unit(self.value, self.unit).unwrap()
+        Bit::from_f64_with_unit(self.value, self.unit).unwrap_or(Bit::MAX)
     }
 }
 

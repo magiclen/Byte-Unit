@@ -181,18 +181,9 @@ impl TryFrom<Bit> for u8 {
 impl TryFrom<Bit> for usize {
     type Error = TryFromIntError;
 
-    #[allow(unexpected_cfgs)]
     #[inline]
     fn try_from(bit: Bit) -> Result<Self, Self::Error> {
-        #[cfg(target_pointer_width = "128")]
-        {
-            usize::try_from(bit.as_u128())
-        }
-
-        #[cfg(not(target_pointer_width = "128"))]
-        {
-            usize::try_from(bit.as_u64())
-        }
+        usize::try_from(bit.as_u128())
     }
 }
 

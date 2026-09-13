@@ -3,8 +3,6 @@ use rust_decimal::prelude::*;
 use super::Byte;
 use crate::{Unit, common::is_zero_remainder_decimal};
 
-const DECIMAL_EIGHT: Decimal = Decimal::from_parts(8, 0, 0, false, 0);
-
 /// Associated functions for building `Byte` instances using `Decimal`.
 impl Byte {
     /// Create a new `Byte` instance from a size in bytes.
@@ -68,7 +66,14 @@ impl Byte {
     pub fn from_decimal_with_unit(size: Decimal, unit: Unit) -> Option<Self> {
         let v = {
             match unit {
-                Unit::Bit => (size / DECIMAL_EIGHT).ceil(),
+                Unit::Bit => {
+                    if size < Decimal::ZERO {
+                        return None;
+                    }
+
+                    // Round bits first so division cannot erase a small positive value.
+                    return Self::from_u128_with_unit(size.ceil().to_u128()?, unit);
+                },
                 Unit::B => size,
                 _ => size.checked_mul(Decimal::from(unit.as_bytes_u128()))?,
             }

@@ -19,7 +19,7 @@ impl Serialize for Byte {
     where
         S: Serializer, {
         if serializer.is_human_readable() {
-            serializer.serialize_str(format!("{self:#}").as_str())
+            serializer.collect_str(&format_args!("{self:#}"))
         } else {
             serializer.serialize_u128(self.as_u128())
         }

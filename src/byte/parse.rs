@@ -56,14 +56,16 @@ impl Byte {
                             match bytes.next() {
                                 Some(e) => match e {
                                     b'0'..=b'9' => {
-                                        value += {
-                                            let mut d = Decimal::from(e - b'0');
+                                        value = value
+                                            .checked_add({
+                                                let mut d = Decimal::from(e - b'0');
 
-                                            d.set_scale(i)
-                                                .map_err(|_| ValueParseError::NumberTooLong)?;
+                                                d.set_scale(i)
+                                                    .map_err(|_| ValueParseError::NumberTooLong)?;
 
-                                            d
-                                        };
+                                                d
+                                            })
+                                            .ok_or(ValueParseError::NumberTooLong)?;
 
                                         i += 1;
                                     },

@@ -1,4 +1,3 @@
-use alloc::format;
 use core::{
     fmt::{self, Formatter},
     str::FromStr,
@@ -9,17 +8,26 @@ use serde::{
     de::{Error as DeError, Visitor},
 };
 
-use super::AdjustedByte;
+use super::{AdjustedByte, Byte};
 
 impl Serialize for AdjustedByte {
     #[inline]
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer, {
+        // Rounding can move a valid adjusted value above the supported range.
+        if self.value >= Byte::MAX.get_adjusted_unit(self.unit).get_value() {
+            return if serializer.is_human_readable() {
+                serializer.collect_str(&format_args!("{:#}", Byte::MAX))
+            } else {
+                serializer.collect_str(&format_args!("{:-#}", Byte::MAX))
+            };
+        }
+
         if serializer.is_human_readable() {
-            serializer.serialize_str(format!("{:#}", self).as_str())
+            serializer.collect_str(&format_args!("{:#}", self))
         } else {
-            serializer.serialize_str(format!("{:-#}", self).as_str())
+            serializer.collect_str(&format_args!("{:-#}", self))
         }
     }
 }
